@@ -223,7 +223,17 @@ class Googlefont_Admin {
 		return $input;
 	}
 	public static function validate_selector( $input ) {
-		vaR_dump($input);
+		$okay = true;
+		foreach ( $input as $key => $selector) {
+			$okay &= is_numeric($key);
+			$okay &= 	is_array($selector) &&
+						isset($selector['name']) &&
+						isset($selector['label']) &&
+						isset($selector['css_selector']);
+		}
+		if ( $okay )
+			return $input;
+
 		$selectors = array();
 		foreach ( array( 'name','label','description','css_selector' ) as $prop ) {
 			foreach ( $input[$prop] as $i => $prop_value ) {
