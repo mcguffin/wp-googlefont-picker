@@ -1,7 +1,7 @@
 <?php
 
 
-if (class_exists('Customize_Fontpicker_Control')) {
+if (!class_exists('Customize_Fontpicker_Control')) {
 	class Customize_Fontpicker_Control extends WP_Customize_Control {
 		public $options = null;
 		public $description = '';
