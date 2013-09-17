@@ -1,0 +1,12 @@
+.googlefont-selectors {
+}
+	.googlefont-selector-item span.selector-label {
+		display:none;
+	}
+	.googlefont-selector-item.closed span.selector-label {
+		display:inline;
+	}
+		.googlefont-selector-options {
+		}
+			.googlefont-filter-variants {
+			}
