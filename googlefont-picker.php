@@ -38,7 +38,7 @@ endif; // function_exists('googlefont_init')
 
 // setup
 if ( ! function_exists( 'googlefont_setup' ) ) :
-function googlefont_setup() {//add_option( 'googlefont_api_key' ,'AIzaSyCHXcT8ZAzlKBdXE_zleXf2MRkdT0un7KA');
+function googlefont_setup() {
 	include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont-filter.php';
 	include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont.php';
 	if ( ( isset( $_POST['customized'] ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) )
@@ -88,7 +88,7 @@ function googlefont_uninstall() {
 	include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont-admin.php';
 	Googlefont_Admin::remove_options();
 }
-//*
+/*
 register_deactivation_hook( __FILE__ , 'googlefont_uninstall' );
 /*/
 register_uninstall_hook( __FILE__ , 'googlefont_uninstall' );
