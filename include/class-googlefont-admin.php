@@ -21,7 +21,7 @@ class Googlefont_Admin {
 		add_settings_section('googlefont_connectivity', __( 'Google API Access' , 'googlefont' ), array(__CLASS__,'explain_api_access'), 'googlefont');
 //		add_settings_section('googlefont_refresh_period', __( 'Connecting Google' , 'googlefont' ), array(__CLASS__,'periodselect'), 'googlefont');
 
-		add_settings_field('googlefont_subset', __('Susbset','googlefont'), array(__CLASS__,'select_subset'), 'googlefont', 'googlefont_selectors');
+		add_settings_field('googlefont_subset', __('Subset','googlefont'), array(__CLASS__,'select_subset'), 'googlefont', 'googlefont_selectors');
 		add_settings_field('googlefont_selectors', __('Selectors','googlefont'), array(__CLASS__,'configure_selectors'), 'googlefont', 'googlefont_selectors');
 		
 		add_settings_field('googlefont_api_key', __('Google API Key','googlefont'), array(__CLASS__,'input_api_key'), 'googlefont', 'googlefont_connectivity');
