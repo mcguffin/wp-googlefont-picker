@@ -1,5 +1,11 @@
 .googlefont-selectors {
 }
+.googlefont-selectors #DUMMY {
+	display:none;
+}
+.googlefont-dummy-container {
+	display:none;
+}
 	.googlefont-selector-item span.selector-label {
 		display:none;
 	}
