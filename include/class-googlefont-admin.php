@@ -146,28 +146,28 @@ class Googlefont_Admin {
 		
 			?><h3 class="hndle"><?php 
 				?><span class="label selector-label"><?php echo $label ?></span><?php 
-				?><input placeholder="<?php _ex('Title','selector','googlefont') ?>" class="selector-label" type="hidden" name="googlefont_selectors[label][<?php echo $i ?>]" value="<?php echo $label ?>"  /><?php
+				?><input placeholder="<?php _ex('Title','selector','googlefont') ?>" class="selector-label" type="hidden" name="googlefont_selectors[<?php echo $i ?>][label]" value="<?php echo $label ?>"  /><?php
 				?> <small class="label">(<?php _e('Applies to:' , 'googlefont') ?> <code class="label"><?php echo $css_selector ?></code>)</small><?php 
 			?></h3><?php
 			?><div class="inside"><?php
 				?><p><label><?php 
 					_ex('Name','selector','googlefont') 
-					?><input type="text" name="googlefont_selectors[name][<?php echo $i ?>]" value="<?php echo $name ?>" /></label></p><?php
+					?><input type="text" name="googlefont_selectors[<?php echo $i ?>][name]" value="<?php echo $name ?>" /></label></p><?php
 
 				?><p><label><?php 
 					_ex('Description','selector','googlefont') 
-					?><textarea type="text" class="large-text" name="googlefont_selectors[description][<?php echo $i ?>]" ><?php echo $description ?></textarea></label></p><?php
+					?><textarea type="text" class="large-text" name="googlefont_selectors[<?php echo $i ?>][description]" ><?php echo $description ?></textarea></label></p><?php
 			
 				?><p><label><?php 
 					_e('CSS-Selector','googlefont') 
-					?><input type="text" class="large-text code" name="googlefont_selectors[css_selector][<?php echo $i ?>]" value="<?php echo $css_selector ?>" /></label></p><?php
+					?><input type="text" class="large-text code" name="googlefont_selectors[<?php echo $i ?>][css_selector]" value="<?php echo $css_selector ?>" /></label></p><?php
 				
 				?><div class="googlefont-selector-options"><?php
 					?><ul class="googlefont-filter-variants"><?php
-						?><li><label><input type="radio" name="googlefont_selectors[filter_variants][<?php echo $i ?>]" <?php checked( $cb, false ,true ); ?> value="none" /><?php _e('Show all fonts','googlefont') ?></label></li><?php
-						?><li><label><input type="radio" name="googlefont_selectors[filter_variants][<?php echo $i ?>]" <?php checked( $cb,'by_b',true ); ?> value="by_b" /><?php _e('Fonts with Regular &amp; <b>Bold</b> styles','googlefont') ?></label></li><?php
-						?><li><label><input type="radio" name="googlefont_selectors[filter_variants][<?php echo $i ?>]" <?php checked( $cb,'by_bi',true ); ?> value="by_bi" /><?php _e('Fonts with Regular, <b>Bold</b> &amp; <i>Italic</i> styles','googlefont') ?></label></li><?php
-						?><li><label><input type="radio" name="googlefont_selectors[filter_variants][<?php echo $i ?>]" <?php checked( $cb,'by_bibi',true ); ?> value="by_bibi" /><?php _e('Fonts with Regular, <b>Bold</b>, <i>Italic</i> &amp; <b><i>BoldItalic</i></b> styles','googlefont') ?></label></li><?php
+						?><li><label><input type="radio" name="googlefont_selectors[<?php echo $i ?>][filter_variants]" <?php checked( $cb, false ,true ); ?> value="none" /><?php _e('Show all fonts','googlefont') ?></label></li><?php
+						?><li><label><input type="radio" name="googlefont_selectors[<?php echo $i ?>][filter_variants]" <?php checked( $cb,'by_b',true ); ?> value="by_b" /><?php _e('Fonts with Regular &amp; <b>Bold</b> styles','googlefont') ?></label></li><?php
+						?><li><label><input type="radio" name="googlefont_selectors[<?php echo $i ?>][filter_variants]" <?php checked( $cb,'by_bi',true ); ?> value="by_bi" /><?php _e('Fonts with Regular, <b>Bold</b> &amp; <i>Italic</i> styles','googlefont') ?></label></li><?php
+						?><li><label><input type="radio" name="googlefont_selectors[<?php echo $i ?>][filter_variants]" <?php checked( $cb,'by_bibi',true ); ?> value="by_bibi" /><?php _e('Fonts with Regular, <b>Bold</b>, <i>Italic</i> &amp; <b><i>BoldItalic</i></b> styles','googlefont') ?></label></li><?php
 					?></ul><?php
 				?></div><?php
 				?><p class="submit"><a href="#" class="googlefont-remove-selector button"><?php _e('Remove Item','googlefont') ?></a></p><?php
@@ -241,6 +241,7 @@ class Googlefont_Admin {
 						isset($selector['label']) &&
 						isset($selector['css_selector']);
 		}
+		var_dump($okay);
 		if ( $okay )
 			return $input;
 
@@ -278,9 +279,9 @@ class Googlefont_Admin {
 			if ( ! $selector['name'] )
 				$selectors[$i]['name'] = sanitize_title( $selectors[$i]['label'] );
 		}
-		
+		var_dump($selectors);
+		exit();
 		return array_values($selectors);
-		return get_option('googlefont_selectors');
 	}
 	
 	public static function validate_subset( $input ) {
