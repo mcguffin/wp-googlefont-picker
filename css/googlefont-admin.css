@@ -21,6 +21,6 @@
 #googlefont-refresh-now {
 }
 #googlefont-refresh-now.working {
-	padding-left:24px;
-	background:url('../images/spinner.gif') no-repeat left center;
+	padding-right:24px;
+	background:url('../images/spinner.gif') no-repeat right center !important;
 }

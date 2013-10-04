@@ -19,7 +19,7 @@ jQuery(document).ready(function($){
 	});
 	
 	$(document).on('click','#googlefont-refresh-now',function(){
-		var $button = $(this).addClass('working');//.attr('disabled','disabled');
+		var $button = $(this).addClass('working').attr('disabled','disabled');
 		// send ajax request
 		var data = { 
 			'action'			: 'googlefont_refresh_fontlist' ,
@@ -29,7 +29,7 @@ jQuery(document).ready(function($){
 		$.post(
 			ajaxurl,data,
 			function( data, textStatus, jqXHR ) {
-				$button.removeClass('working');//.removeAttr('disabled');
+				$button.removeClass('working').removeAttr('disabled');
 				if ( data.success )
 					$('<span style="padding:0 0.5em;color:#006600;">'+data.message+'</span>').insertAfter($button).fadeOut(2000);
 			}

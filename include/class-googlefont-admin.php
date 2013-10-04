@@ -8,8 +8,6 @@ class Googlefont_Admin {
 	}
 	public static function admin_init() {
 		self::add_options();
-		//self::add_options_page();
-//		var_dump(current_filter());
 		
 		add_action('load-settings_page_googlefont',array(__CLASS__,'enqueue_styles'));
 		register_setting( 'googlefont_options', 'googlefont_selectors', array(__CLASS__,'validate_selector') );
@@ -30,7 +28,7 @@ class Googlefont_Admin {
 		// add ajax refresh
 		add_action( 'wp_ajax_googlefont_refresh_fontlist', array( __CLASS__ , 'ajax_googlefont_refresh' ) );
 		// add cron
-		
+		add_action('update_option_googlefont_refresh_period' , array(__CLASS__,'set_refresh_cron'),10,2);
 	}
 	
 	public static function ajax_googlefont_refresh(){
@@ -114,8 +112,9 @@ class Googlefont_Admin {
 		
 		$options = array(
 			'manual' => __('Manual', 'googlefont'),
-			'monthly' => __('Monthly', 'googlefont'),
 			'weekly'  => __('Weekly', 'googlefont'),
+			'monthly' => __('Monthly', 'googlefont'),
+			'yearly'  => __( 'Once a Year', 'googlefont' ),
 		);
 		$refresh_period = get_option('googlefont_refresh_period');
 		?><select name="googlefont_refresh_period"><?php
@@ -246,11 +245,11 @@ class Googlefont_Admin {
 		if ( ! empty($input) ) {
 			if (preg_match( '/[^a-zA-Z0-9-_]/' , $input)) {
 				// put some error message: Malformed API-Key
-				add_settings_error( 'googlefont_api_key', 1, __( 'Invalid API-Key.','googlefonts' ), 'error' );
+				add_settings_error( 'googlefont_api_key', 1, __( 'Invalid API-Key.','googlefont' ), 'error' );
 				return get_option('googlefont_api_key');
 			}
 			if ( ! Googlefont_Api::get_instance()->refresh( $input ) ) {
-				add_settings_error( 'googlefont_api_key', 2, __( 'API-Key was not accepted by Google.','googlefonts' ), 'error' );
+				add_settings_error( 'googlefont_api_key', 2, __( 'API-Key was not accepted by Google.','googlefont' ), 'error' );
 				return get_option('googlefont_api_key');
 			}
 		}
@@ -315,7 +314,7 @@ class Googlefont_Admin {
 	public static function validate_subset( $input ) {
 		$subsets = Googlefont_API::get_instance()->get_available_subsets();
 		if ( ! in_array( $input , $subsets ) ) {
-			add_settings_error( 'googlefont_subset', 3, __( 'Invalid subset.','googlefonts' ), 'error' );
+			add_settings_error( 'googlefont_subset', 3, __( 'Invalid subset.','googlefont' ), 'error' );
 			$subset = get_option('googlefont_subset');
 		} else {
 			$subset = $input;
@@ -323,12 +322,25 @@ class Googlefont_Admin {
 		return $subset;
 	}
 	public static function validate_refresh_period( $input ) {
-		if ( ! in_array( $input , array( 'manual' ,'monthly','weekly' ) ) ) {
-			add_settings_error( 'googlefont_api_key', 3, __( 'Invalid refresh period. How did you do this?','googlefonts' ), 'error' );
+		if ( ! in_array( $input , array( 'manual' ,'monthly','weekly','yearly' ) ) ) {
+			add_settings_error( 'googlefont_api_key', 3, __( 'Invalid refresh period. How did you manage that?','googlefont' ), 'error' );
 			return get_option('googlefont_refresh_period');
 		}
-			
+		
+		// set cron
+		
 		return $input;
+	}
+	
+	public static function set_refresh_cron( $old_value , $new_value ) {
+		// set new cron, clear the old one.
+		$old_cron_task_hook = "calendar_cron_{$old_value}";
+		$new_cron_task_hook = "calendar_cron_{$new_value}";
+		
+		if ( wp_next_scheduled( $old_cron_task_hook ) )
+			wp_clear_scheduled_hook( $old_cron_task_hook );
+
+		$res = wp_schedule_event( time(), $new_value , $new_cron_task_hook );
 	}
 	
 }

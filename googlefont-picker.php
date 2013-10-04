@@ -9,7 +9,7 @@ Plugin Name: WP GoogleFont Picker
 Plugin URI: https://github.com/mcguffin/wp-googlefont-picker
 Description: Pick some GoogleFonts to pretty up your website. The Plugin hooks into WP Theme Customizer.
 Author: Joern Lund
-Version: 0.0.1
+Version: 0.0.2
 Author URI: https://github.com/mcguffin/
 
 Text Domain: googlefont
@@ -29,11 +29,17 @@ ToDo:
 
 if ( ! function_exists( 'googlefont_init' ) ) :
 function googlefont_init() {
-	load_plugin_textdomain( 'googlefont' , false , dirname(__FILE__).'/lang/' );
 }
 add_action('init','googlefont_init');
 endif; // function_exists('googlefont_init')
 
+
+if ( ! function_exists( 'googlefont_loaded' ) ) :
+function googlefont_loaded() {
+	load_plugin_textdomain( 'googlefont' , false , dirname(plugin_basename( __FILE__ )) . '/lang');
+}
+add_action('plugins_loaded','googlefont_loaded');
+endif; // function_exists('googlefont_loaded')
 
 
 // setup
@@ -95,6 +101,7 @@ register_uninstall_hook( __FILE__ , 'googlefont_uninstall' );
 //*/
 endif; // function_exists('googlefont_uninstall')
 
+include_once plugin_dir_path( __FILE__ ).'/include/googlefont-cron.php';
 
 // 
 

@@ -37,7 +37,7 @@ if ( ! class_exists('Customize_Fontpicker_Control') ) {
 					?><div class="googlefont-picker nofavs">
 						<div class="googlefont-filters">
 							<input type="hidden" class="googlefont-value" <?php $this->link(); ?> value="<?php echo esc_textarea( $this->value() ); ?>" />
-							<span class="filter favorite" title="<?php _e( 'Restrict view to favorites' , 'twentythirteen' ) ?>"></span>
+							<span class="filter favorite" title="<?php _e( 'Restrict view to favorites' , 'googlefont' ) ?>"></span>
 							<input type="search" placeholder="<?php _e('Filter…') ?>" class="googlefont-filter" />
 						</div>
 					
@@ -65,13 +65,13 @@ if ( ! class_exists('Customize_Fontpicker_Control') ) {
 								$id = sanitize_title( $font->family );
 						
 								?><label class="googlefont-item <?php echo implode(' ',$item_classes) ?>"><?php
-									?><span class="favorite" title="<?php _e( 'Add to favorites' , 'twentythirteen' ) ?>"><?php  ?></span><?php
+									?><span class="favorite" title="<?php _e( 'Add to favorites' , 'googlefont' ) ?>"><?php  ?></span><?php
 									?><span class="googlefont-item-head"><?php
 										?><input class="googlefont-pick-family" <?php checked( $font->family , $family , true); ?> type="radio" name="googlefont-family" value="<?php echo $font->family ?>" /><?php
-										?><a class="sample" href="http://www.google.com/webfonts/specimen/<?php echo $font->family ?>" target="_blank"><?php _e('Sample','twentythirteen') ?></a><?php
+										?><a class="sample" href="http://www.google.com/webfonts/specimen/<?php echo $font->family ?>" target="_blank"><?php _e('Sample','googlefont') ?></a><?php
 										?><strong class="title"><?php echo $font->family; ?></strong><br /><?php
 										$count_styles = count( $font->variants );
-										?><span class="info"><?php printf( _n('(%s style)','(%s styles)',$count_styles,'twentythirteen') , $count_styles ); ?></span><br /><?php
+										?><span class="info"><?php printf( _n('(%s style)','(%s styles)',$count_styles,'googlefont') , $count_styles ); ?></span><br /><?php
 								
 									?></span><?php
 							
