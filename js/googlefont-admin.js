@@ -17,4 +17,26 @@ jQuery(document).ready(function($){
 		$(this).closest( '.googlefont-selector-item' ).remove();
 		return false;
 	});
+	
+	$(document).on('click','#googlefont-refresh-now',function(){
+		var $button = $(this).addClass('working');//.attr('disabled','disabled');
+		// send ajax request
+		var data = { 
+			'action'			: 'googlefont_refresh_fontlist' ,
+			'_wp_ajax_nonce'	: $('input[name="_wp_ajax_nonce"]').val(),
+			'_wp_http_referer'	: $('input[name="_wp_http_referer"]').val()
+		}; // ... 
+		$.post(
+			ajaxurl,data,
+			function( data, textStatus, jqXHR ) {
+				$button.removeClass('working');//.removeAttr('disabled');
+				if ( data.success )
+					$('<span style="padding:0 0.5em;color:#006600;">'+data.message+'</span>').insertAfter($button).fadeOut(2000);
+			}
+		);
+		
+		return false;
+	});
+	
+	
 });

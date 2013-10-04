@@ -26,7 +26,31 @@ class Googlefont_Admin {
 		
 		add_settings_field('googlefont_api_key', __('Google API Key','googlefont'), array(__CLASS__,'input_api_key'), 'googlefont', 'googlefont_connectivity');
 		add_settings_field('googlefont_refresh_period', __('Refresh period','googlefont'), array(__CLASS__,'select_refresh_period'), 'googlefont', 'googlefont_connectivity');
+		
+		// add ajax refresh
+		add_action( 'wp_ajax_googlefont_refresh_fontlist', array( __CLASS__ , 'ajax_googlefont_refresh' ) );
+		// add cron
+		
 	}
+	
+	public static function ajax_googlefont_refresh(){
+		if ( wp_verify_nonce(@$_POST['_wp_ajax_nonce'] , 'googlefont_refresh' ) && current_user_can( 'manage_options' ) ) {
+			// refresh font list
+			$fonts_before = count(json_decode(get_option( '_googlefont_fontlist' ))->items);
+			header( 'Content-Type: application/json' );
+			$api = Googlefont_Api::get_instance();
+			$fonts_after = count(json_decode(get_option( '_googlefont_fontlist' ))->items);
+			echo json_encode( (object) array(
+				'success' 	=> $api->refresh( get_option( 'googlefont_api_key' ) ),
+				'before'	=> $fonts_before,
+				'after'		=> $fonts_after,
+				'added'		=> $fonts_after-$fonts_before,
+				'message'	=> sprintf(_n( 'Got one new font. %2$d Fonts overall.' , 'Got %1$d new fonts. %2$d Fonts overall.' , $fonts_after-$fonts_before , 'googlefont' ),$fonts_after-$fonts_before , $fonts_after ),
+			) );
+		}
+		die();
+	}
+	
 	public static function enqueue_styles() {
 		wp_enqueue_script( 'googlefont-admin', plugins_url( '/js/googlefont-admin.js' , dirname(__FILE__) ) , array('jquery','jquery-ui-sortable') ) ;
 		wp_enqueue_style( 'googlefont-admin', plugins_url( '/css/googlefont-admin.css' , dirname(__FILE__) )  );
@@ -51,7 +75,6 @@ class Googlefont_Admin {
 			?><form action="options.php" method="post"><?php
 				settings_fields( 'googlefont_options' );
 				do_settings_sections( 'googlefont' ); 
-
 				?><input name="submit" class="button button-primary" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" /><?php
 			?></form><?php
 		?></div><?php
@@ -100,6 +123,10 @@ class Googlefont_Admin {
 				?><option <?php selected( $value , $refresh_period , true) ?> value="<?php echo $value ?>"><?php echo $label ?></option><?php
 			}
 		?></select><?php
+		if ( $api_key = get_option('googlefont_api_key') ) {
+			wp_nonce_field( 'googlefont_refresh' , '_wp_ajax_nonce' );
+			?><input name="googlefont[refresh]" id="googlefont-refresh-now" class="hide-if-no-js button button-secondary" type="submit" value="<?php esc_attr_e('Refresh now','googlefont'); ?>" /><?php
+		}
 	}
 	public function select_subset() {
 		$subsets = Googlefont_API::get_instance()->get_available_subsets();
@@ -140,7 +167,7 @@ class Googlefont_Admin {
 		));
 		extract($selector);
 		$cb =  $filter ? $filter->callback[1] : false;
-		
+
 		?><div id="googlefont-selector-<?php echo $i ?>" class="postbox googlefont-selector-item ui-sortable closed"><?php
 			?><div class="handlediv" title="<?php esc_attr_e('Click to toggle') ?>"><br /></div><?php
 		
@@ -231,6 +258,22 @@ class Googlefont_Admin {
 	}
 	public static function validate_selector( $input ) {
 		$okay = true;
+		$style_filters = array(
+			'by_b'		=> array( 'regular' , 'italic' ),
+			'by_bi'		=> array( 'regular' , 'italic' , '700'),
+			'by_bibi'	=> array( 'regular' , 'italic' , '700' , '700italic'),
+		);
+		$defaults = array(
+			'name' => '',
+			'label' => '',
+			'css_selector' => '',
+			'description' => '',
+			'filter' => false,
+			'auto_embed_styles' => false,
+			'show_styles' => false,
+		);
+		$return = array();
+		
 		foreach ( $input as $key => $selector) {
 			if ( ! is_numeric($key) ) {
 				unset($input[$key]);
@@ -240,48 +283,33 @@ class Googlefont_Admin {
 						isset($selector['name']) &&
 						isset($selector['label']) &&
 						isset($selector['css_selector']);
-		}
-		var_dump($okay);
-		if ( $okay )
-			return $input;
+			if ( ! $okay )
+				return false;
 
-		$selectors = array();
-		foreach ( array( 'name','label','description','css_selector' ) as $prop ) {
-			foreach ( $input[$prop] as $i => $prop_value ) {
-				if ( ! isset($selectors[$i]) )
-					$selectors[$i] = array();
-				$selectors[$i][$prop] = $prop_value;
-			}
-		}
-		
-		
-		$style_filters = array(
-			'by_b'		=> array( 'regular' , 'italic' ),
-			'by_bi'		=> array( 'regular' , 'italic' , '700'),
-			'by_bibi'	=> array( 'regular' , 'italic' , '700' , '700italic'),
-		);
-		foreach ( $input['filter_variants'] as $i => $value ) {
-			if ( ! is_numeric($i) )
-				continue;
-			$selectors[$i]['filter'] = false;
-			if ( isset( $style_filters[$value] ) ) {
-				$selectors[$i]['filter'] 			= (object) array('callback' => array('Googlefont_Filter' , $value) );
-				$selectors[$i]['auto_embed_styles'] = $style_filters[ $value ];
-				$selectors[$i]['show_styles'] 		= false;
-			}
-		}
-		// normalize naems
-		foreach ( $selectors as $i => $selector ) {
-			if ( ! is_numeric($i) )
-				continue;
 			if ( ! $selector['label'] )
 				$selectors[$i]['label'] = __( "Font-Picker #{$i}" , 'googlefont' );
+
 			if ( ! $selector['name'] )
-				$selectors[$i]['name'] = sanitize_title( $selectors[$i]['label'] );
+				$selector['name'] = sanitize_title( $selector['label'] );
+
+			$selector = wp_parse_args( $selector , $defaults );
+
+			if ( isset( $selector['filter_variants'] ) && isset( $style_filters[$selector['filter_variants']] ) ) {
+				$selector['filter'] 			= (object) array('callback' => array('Googlefont_Filter' , $selector['filter_variants'] ) );
+				$selector['auto_embed_styles']	= $style_filters[ $selector['filter_variants'] ];
+				$selector['show_styles'] 		= false;
+//				unset( $selector['filter_variants'] );
+			} else {
+				$selector['filter'] = false;
+			}
+			
+			foreach ( array_keys($selector) as $k )
+				if ( ! array_key_exists( $k , $defaults) )
+					unset($selector[$k]);
+			
+			$return[] = $selector;
 		}
-		var_dump($selectors);
-		exit();
-		return array_values($selectors);
+		return $return;
 	}
 	
 	public static function validate_subset( $input ) {

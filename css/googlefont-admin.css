@@ -16,3 +16,11 @@
 		}
 			.googlefont-filter-variants {
 			}
+
+
+#googlefont-refresh-now {
+}
+#googlefont-refresh-now.working {
+	padding-left:24px;
+	background:url('../images/spinner.gif') no-repeat left center;
+}
