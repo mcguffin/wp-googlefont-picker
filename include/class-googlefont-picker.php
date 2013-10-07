@@ -20,7 +20,7 @@ class Googlefont_Picker {
 	//	Ajax
 	// -------------------------------------------
 	public function ajax_add_to_favorites($a) {
-		header( 'Content-Type: text/plain' );
+//		header( 'Content-Type: text/plain' );
 		$font = $_POST['font'];
 		$favs = get_user_option('googlefont_favorites');
 		if ( !$favs )
