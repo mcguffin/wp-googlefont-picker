@@ -12,7 +12,7 @@ class Googlefont {
 		if ( $selectors = get_option( 'googlefont_selectors' ) )
 			foreach ( $selectors as $selector_args )
 				Googlefont::register_font_selector( $selector_args );
-	
+		
 		add_action( 'wp_enqueue_scripts' , array(&$this,'enqueue_font_css') , 1 );
 		add_action( 'admin_print_styles-appearance_page_custom-header', array(&$this,'googlefont_dequeue_gfont') , 99 ); // fct: dequeue twentythirteen-fonts, enqueue own fonts
 		add_action( 'wp_enqueue_scripts',  array(&$this,'googlefont_dequeue_gfont') , 99 );

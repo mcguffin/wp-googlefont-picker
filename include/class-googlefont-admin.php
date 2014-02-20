@@ -56,8 +56,9 @@ class Googlefont_Admin {
 		add_action( 'wp_ajax_googlefont_refresh_fontlist', array( __CLASS__ , 'ajax_googlefont_refresh' ) );
 		// add cron
 		add_action('update_option_googlefont_refresh_period' , array(__CLASS__,'set_refresh_cron'),10,2);
+		add_action('update_option_googlefont_selectors' , array(__CLASS__,'unset_cached_css'),10,2);
 	}
-	
+
 	public static function ajax_googlefont_refresh() {
 		if ( wp_verify_nonce(@$_POST['_wp_ajax_nonce'] , 'googlefont_refresh' ) && current_user_can( 'manage_options' ) ) {
 			// refresh font list
@@ -405,7 +406,7 @@ class Googlefont_Admin {
 			if ( ! $selector['name'] )
 				$selector['name'] = sanitize_title( $selector['label'] );
 			
-			$selector['filter'] = (bool) $selector['filter'];
+			$selector['active'] = (bool) $selector['active'];
 
 			$selector = wp_parse_args( $selector , $defaults );
 
@@ -457,6 +458,9 @@ class Googlefont_Admin {
 			wp_clear_scheduled_hook( $old_cron_task_hook );
 
 		$res = wp_schedule_event( time(), $new_value , $new_cron_task_hook );
+	}
+	public static function unset_cached_css( $old_value , $new_value ) {
+		delete_option( sprintf( 'googlefont_%s_css' , get_option('stylesheet') ) );
 	}
 	
 }
