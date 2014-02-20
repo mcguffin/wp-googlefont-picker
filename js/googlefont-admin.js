@@ -7,9 +7,10 @@ jQuery(document).ready(function($){
 	});
 	$('.googlefont-selectors').sortable();
 	
-	$('#googlefont-add-selector').click(function(){
+	$(document).on('click','#googlefont-add-selector',function(){
 		var i = $('.googlefont-selector-item').length;
-		$($('#googlefont-dummy-container').html().replace(/__DUMMY__/g,i+1)).appendTo('#googlefont-selectors');
+		var $new_selector = $($('#googlefont-dummy-container').html().replace(/__DUMMY__/g,i+1)).appendTo('#googlefont-selectors');
+		$new_selector.find('.handlediv').trigger('click');
 		return false;
 	});
 	$(document).on('click','.googlefont-remove-selector',function(){

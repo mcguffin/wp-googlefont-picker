@@ -2,11 +2,7 @@
 
 
 /*
-- add new font -> open selector panel
-- toggle open 3angle gone in WP 3.8
 - button: back to default values
-
-
 */
 
 
@@ -188,31 +184,83 @@ class Googlefont_Admin {
 				?> <small class="label">(<?php _e('Applies to:' , 'googlefont') ?> <code class="label"><?php echo $css_selector ?></code>)</small><?php 
 			?></h3><?php
 			?><div class="inside"><?php
-				?><input type="hidden" name="googlefont_selectors[<?php echo $i ?>][active]" value="0" /><?php
+				
+				?><table class="form-table"><?php
+					// active
+					?><tr><?php
+						?><th><?php
+							?><label for="selector-active-<?php echo $i ?>"><?php
+								_ex('Active','selector','googlefont');
+							?></label><?php
+						?></th><?php
+						?><td><?php
+							?><input type="hidden" name="googlefont_selectors[<?php echo $i ?>][active]" value="0" /><?php
+							?><input id="selector-active-<?php echo $i ?>" type="checkbox" name="googlefont_selectors[<?php echo $i ?>][active]" <?php checked($active) ?> value="1" /><?php
+						?></td><?php
+					?></tr><?php
+					
+					// name
+					?><tr><?php
+						?><th><?php
+							?><label for="selector-name-<?php echo $i ?>"><?php
+								_ex('Name','selector','googlefont') ;
+							?></label><?php
+						?></th><?php
+						?><td><?php
+							?><input for="selector-name-<?php echo $i ?>" type="text" name="googlefont_selectors[<?php echo $i ?>][name]" value="<?php echo $name ?>" /><?php
+						?></td><?php
+					?></tr><?php
+					
+					// Description
+					?><tr><?php
+						?><th><?php
+							?><label for="selector-description-<?php echo $i ?>"><?php
+								_ex('Description','selector','googlefont') ;
+							?></label><?php
+						?></th><?php
+						?><td><?php
+							?><textarea id="selector-description-<?php echo $i ?>" type="text" class="large-text" name="googlefont_selectors[<?php echo $i ?>][description]" ><?php echo $description ?></textarea><?php
+						?></td><?php
+					?></tr><?php
+					
+					// CSS
+					?><tr><?php
+						?><th><?php
+							?><label for="selector-css-selector-<?php echo $i ?>"><?php
+								_e('CSS-Selector','googlefont') 
+							?></label><?php
+						?></th><?php
+						?><td><?php
+							?><input id="selector-css-selector-<?php echo $i ?>" type="text" class="large-text code" name="googlefont_selectors[<?php echo $i ?>][css_selector]" value="<?php echo $css_selector ?>" /><?php
+						?></td><?php
+					?></tr><?php
+					
+					// Filter
+					?><tr><?php
+						?><th><?php
+							?><label><?php
+								_e('Filter Styles','googlefont') 
+							?></label><?php
+						?></th><?php
+						?><td><?php
+							?><ul class="googlefont-filter-variants"><?php
+								?><li><label><input type="radio" name="googlefont_selectors[<?php echo $i ?>][filter_variants]" <?php checked( $cb, false ,true ); ?> value="none" /><?php _e('Show all fonts','googlefont') ?></label></li><?php
+								?><li><label><input type="radio" name="googlefont_selectors[<?php echo $i ?>][filter_variants]" <?php checked( $cb,'by_b',true ); ?> value="by_b" /><?php _e('Fonts with Regular &amp; <b>Bold</b> styles','googlefont') ?></label></li><?php
+								?><li><label><input type="radio" name="googlefont_selectors[<?php echo $i ?>][filter_variants]" <?php checked( $cb,'by_bi',true ); ?> value="by_bi" /><?php _e('Fonts with Regular, <b>Bold</b> &amp; <i>Italic</i> styles','googlefont') ?></label></li><?php
+								?><li><label><input type="radio" name="googlefont_selectors[<?php echo $i ?>][filter_variants]" <?php checked( $cb,'by_bibi',true ); ?> value="by_bibi" /><?php _e('Fonts with Regular, <b>Bold</b>, <i>Italic</i> &amp; <b><i>BoldItalic</i></b> styles','googlefont') ?></label></li><?php
+							?></ul><?php
+						?></td><?php
+					?></tr><?php
+					
+					
+					
+				?></table><?php
+				
 				?><p><label><?php 
-					?><input type="checkbox" name="googlefont_selectors[<?php echo $i ?>][active]" <?php checked($active) ?> value="1" /><?php
-					_ex('Active','selector','googlefont') 
-				?></label></p><?php
-
-				?><p><label><?php 
-					_ex('Name','selector','googlefont') 
-					?><input type="text" name="googlefont_selectors[<?php echo $i ?>][name]" value="<?php echo $name ?>" /></label></p><?php
-
-				?><p><label><?php 
-					_ex('Description','selector','googlefont') 
-					?><textarea type="text" class="large-text" name="googlefont_selectors[<?php echo $i ?>][description]" ><?php echo $description ?></textarea></label></p><?php
-			
-				?><p><label><?php 
-					_e('CSS-Selector','googlefont') 
-					?><input type="text" class="large-text code" name="googlefont_selectors[<?php echo $i ?>][css_selector]" value="<?php echo $css_selector ?>" /></label></p><?php
+					
+					?></label></p><?php
 				
 				?><div class="googlefont-selector-options"><?php
-					?><ul class="googlefont-filter-variants"><?php
-						?><li><label><input type="radio" name="googlefont_selectors[<?php echo $i ?>][filter_variants]" <?php checked( $cb, false ,true ); ?> value="none" /><?php _e('Show all fonts','googlefont') ?></label></li><?php
-						?><li><label><input type="radio" name="googlefont_selectors[<?php echo $i ?>][filter_variants]" <?php checked( $cb,'by_b',true ); ?> value="by_b" /><?php _e('Fonts with Regular &amp; <b>Bold</b> styles','googlefont') ?></label></li><?php
-						?><li><label><input type="radio" name="googlefont_selectors[<?php echo $i ?>][filter_variants]" <?php checked( $cb,'by_bi',true ); ?> value="by_bi" /><?php _e('Fonts with Regular, <b>Bold</b> &amp; <i>Italic</i> styles','googlefont') ?></label></li><?php
-						?><li><label><input type="radio" name="googlefont_selectors[<?php echo $i ?>][filter_variants]" <?php checked( $cb,'by_bibi',true ); ?> value="by_bibi" /><?php _e('Fonts with Regular, <b>Bold</b>, <i>Italic</i> &amp; <b><i>BoldItalic</i></b> styles','googlefont') ?></label></li><?php
-					?></ul><?php
 				?></div><?php
 				?><p class="submit"><a href="#" class="googlefont-remove-selector button"><?php _e('Remove Item','googlefont') ?></a></p><?php
 			?></div><?php
@@ -233,12 +281,14 @@ class Googlefont_Admin {
 				),
 				'show_styles' => false,
 				'auto_embed_styles' => array( 'regular' , 'italic' , '700' , '700italic'),
+				'active' => true,
 			),
 			array(
 				'name'=>'accent_font' , // accent font pattern
 				'label'=>__('Accent font','googlefont'),
 				'css_selector'=>'h1,h2,h3,h4,h5,h6,.entry-title,#site-title,#main-nav select' , // travelify selector
 				'description'=>__('Font for Headlines, page-header.','googlefont'),
+				'active' => true,
 			),
 		);
 		add_option( 'googlefont_api_key' , '' , '' , false );
