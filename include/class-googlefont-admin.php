@@ -1,5 +1,16 @@
 <?php
 
+
+/*
+- add new font -> open selector panel
+- toggle open 3angle gone in WP 3.8
+- button: back to default values
+
+
+*/
+
+
+
 class Googlefont_Admin {
 
 	public static function init() {
@@ -31,7 +42,7 @@ class Googlefont_Admin {
 		add_action('update_option_googlefont_refresh_period' , array(__CLASS__,'set_refresh_cron'),10,2);
 	}
 	
-	public static function ajax_googlefont_refresh(){
+	public static function ajax_googlefont_refresh() {
 		if ( wp_verify_nonce(@$_POST['_wp_ajax_nonce'] , 'googlefont_refresh' ) && current_user_can( 'manage_options' ) ) {
 			// refresh font list
 			$fonts_before = count(json_decode(get_option( '_googlefont_fontlist' ))->items);
@@ -104,11 +115,11 @@ class Googlefont_Admin {
 	// The CSS Selectors very much depend on Your Theme, so the default values won't work every time. You better come up with a little css knowledge, or at least find somebody who can help you out.
 	
 	
-	public function input_api_key() {
+	public static function input_api_key() {
 		$api_key = get_option('googlefont_api_key');
 		?><input type="text" name="googlefont_api_key" value="<?php echo $api_key ?>" /><?php
 	}
-	public function select_refresh_period() {
+	public static function select_refresh_period() {
 		
 		$options = array(
 			'manual' => __('Manual', 'googlefont'),
@@ -127,7 +138,7 @@ class Googlefont_Admin {
 			?><input name="googlefont[refresh]" id="googlefont-refresh-now" class="hide-if-no-js button button-secondary" type="submit" value="<?php esc_attr_e('Refresh now','googlefont'); ?>" /><?php
 		}
 	}
-	public function select_subset() {
+	public static function select_subset() {
 		$subsets = Googlefont_API::get_instance()->get_available_subsets();
 		$subset = get_option('googlefont_subset');
 		
@@ -138,12 +149,12 @@ class Googlefont_Admin {
 			}
 		?></select><?php
 	}
-	public function configure_selectors() {
+	public static function configure_selectors() {
 		$selectors = get_option('googlefont_selectors');
 		
 		// add dummy picker to clone
 		
-		?><div id="googlefont-selectors" class="googlefont-selectors metabox-holder"><?php
+		?><div id="googlefont-selectors" class="googlefont-selectors metabox-holder meta-box-sortables"><?php
 		foreach ($selectors as $i => $selector )
 			self::print_selector( $selector , $i );
 		?></div><?php
@@ -156,13 +167,14 @@ class Googlefont_Admin {
 		</script><?php
 	}
 	
-	private function print_selector( $selector = array() , $i = '__DUMMY__' ) {
+	private static function print_selector( $selector = array() , $i = '__DUMMY__' ) {
 		$selector = wp_parse_args($selector , array(
 			'name' => 'font-picker-'.$i,
 			'label' => __('New Font Picker'),
 			'css_selector' => 'cite,blockquote',
 			'description' => '',
 			'filter' => false,
+			'active' => true,
 		));
 		extract($selector);
 		$cb =  $filter ? $filter->callback[1] : false;
@@ -176,6 +188,12 @@ class Googlefont_Admin {
 				?> <small class="label">(<?php _e('Applies to:' , 'googlefont') ?> <code class="label"><?php echo $css_selector ?></code>)</small><?php 
 			?></h3><?php
 			?><div class="inside"><?php
+				?><input type="hidden" name="googlefont_selectors[<?php echo $i ?>][active]" value="0" /><?php
+				?><p><label><?php 
+					?><input type="checkbox" name="googlefont_selectors[<?php echo $i ?>][active]" <?php checked($active) ?> value="1" /><?php
+					_ex('Active','selector','googlefont') 
+				?></label></p><?php
+
 				?><p><label><?php 
 					_ex('Name','selector','googlefont') 
 					?><input type="text" name="googlefont_selectors[<?php echo $i ?>][name]" value="<?php echo $name ?>" /></label></p><?php
@@ -270,6 +288,7 @@ class Googlefont_Admin {
 			'filter' => false,
 			'auto_embed_styles' => false,
 			'show_styles' => false,
+			'active' => false,
 		);
 		$return = array();
 		
@@ -290,6 +309,8 @@ class Googlefont_Admin {
 
 			if ( ! $selector['name'] )
 				$selector['name'] = sanitize_title( $selector['label'] );
+			
+			$selector['filter'] = (bool) $selector['filter'];
 
 			$selector = wp_parse_args( $selector , $defaults );
 

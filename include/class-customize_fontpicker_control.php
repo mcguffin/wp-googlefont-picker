@@ -82,7 +82,7 @@ if ( ! class_exists('Customize_Fontpicker_Control') ) {
 										?></span><?php
 							
 									} else {
-										if ( count( $this->options->auto_embed_styles ) ) {
+										if (  is_array($this->options->auto_embed_styles ) && count( $this->options->auto_embed_styles ) ) {
 											$styles = array_intersect( $this->options->auto_embed_styles , $font->variants );
 											?><input class="autoembed-style" type="hidden" name="<?php echo $id ?>-variant" value="<?php echo implode( ',' , $styles ) ?>" /><?php
 										}

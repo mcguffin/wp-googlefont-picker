@@ -40,7 +40,8 @@ class Googlefont {
 			'description' => __( 'Affects body text.' , 'googlefont' ),
 			'filter' => false,
 			'show_styles' => true,
-			'auto_embed_styles' => array( )
+			'auto_embed_styles' => array( ),
+			'active' => true,
 		));
 		$this->_selectors[$selector->name] = $selector;
 		
@@ -165,20 +166,23 @@ class Googlefont {
 	private function get_selector_css( $selector_name ) {
 		$selector = $this->_selectors[$selector_name];
 		$ret = '';
-		$theme_mod = get_theme_mod( $selector_name );
-		if ( ! $theme_mod )
-			return '';
-		$font_style = $this->get_gfont_styles_name( $theme_mod );
-		foreach ($font_style as $font_name => $styles ) {
+		if ( $selector->active ) {
+		
+			$theme_mod = get_theme_mod( $selector_name );
+			if ( ! $theme_mod )
+				return '';
+			$font_style = $this->get_gfont_styles_name( $theme_mod );
+			foreach ($font_style as $font_name => $styles ) {
 			
-			$ret .= "\n" . $selector->css_selector.'{ font-family: \''.$font_name.'\';';
-			if ( count($styles) == 1 && $styles[0] != 'regular' ) {
-				if ( intval( $styles[0] ) )
-					$ret .= 'font-weight: '.intval($styles[0]).';';
-				if ( strpos($styles[0],'italic') !== false )
-					$ret .= 'font-style: italic;';
+				$ret .= "\n" . $selector->css_selector.'{ font-family: \''.$font_name.'\';';
+				if ( count($styles) == 1 && $styles[0] != 'regular' ) {
+					if ( intval( $styles[0] ) )
+						$ret .= 'font-weight: '.intval($styles[0]).';';
+					if ( strpos($styles[0],'italic') !== false )
+						$ret .= 'font-style: italic;';
+				}
+				$ret .= "}";
 			}
-			$ret .= "}";
 		}
 		return $ret;
 	}

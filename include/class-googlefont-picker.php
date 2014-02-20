@@ -66,15 +66,17 @@ class Googlefont_Picker {
 		) );
 
 		foreach ( $selectors as $name => $obj ) {
-			$wp_customize->add_setting( $obj->name , array('default' => '',));
-			$ctrl = new Customize_Fontpicker_Control( $wp_customize , $obj->name , array(
-				'label'=>$obj->label,
-				'section' => 'googlefont_settings',
-				'type' => 'text',
-				'description'=>$obj->description,
-				'options'=>$obj,
-			) );
-			$wp_customize->add_control( $ctrl );
+			if ( $obj->active ) {
+				$wp_customize->add_setting( $obj->name , array('default' => '',));
+				$ctrl = new Customize_Fontpicker_Control( $wp_customize , $obj->name , array(
+					'label'=>$obj->label,
+					'section' => 'googlefont_settings',
+					'type' => 'text',
+					'description'=>$obj->description,
+					'options'=>$obj,
+				) );
+				$wp_customize->add_control( $ctrl );
+			}
 		}
 	}
 	

@@ -11,7 +11,6 @@ jQuery(document).ready(function($){
 		var i = $('.googlefont-selector-item').length;
 		$($('#googlefont-dummy-container').html().replace(/__DUMMY__/g,i+1)).appendTo('#googlefont-selectors');
 		return false;
-		
 	});
 	$(document).on('click','.googlefont-remove-selector',function(){
 		$(this).closest( '.googlefont-selector-item' ).remove();
