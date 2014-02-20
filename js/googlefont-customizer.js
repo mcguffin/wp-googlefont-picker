@@ -1,19 +1,19 @@
 jQuery(document).ready(function($){
-	$('.googlefont-pick-family').click(function(){
+	$(document).on('click','.googlefont-pick-family',function(){
 		// set value
 		var $this = $(this);
-		var $picker, $control, font, style;
+		var $picker = $this.closest('.googlefont-fontpicker'),
+			$control = $this.closest('.googlefont-control').find('.googlefont-value'), 
+			$item = $this.closest('.googlefont-item'), 
+			font, style;
+		
+		$picker.find('.googlefont-item').removeClass('selected');
 		
 		if ($this.is(':checked')) {
 			font = $this.val();
-			$picker = $this
-				.closest('.googlefont-fontpicker');
-			
-			$picker.find('.googlefont-item').removeClass('selected');
-			
-			$item = $this.closest('.googlefont-item').addClass('selected');
-			$control = $this.closest('.googlefont-control')
-				.find('.googlefont-value')
+
+			$item.addClass('selected');
+			$control
 				.val( font.replace(/ /g, '+') )
 				.trigger('change');
 			$picker
@@ -43,8 +43,9 @@ jQuery(document).ready(function($){
 		var $list = $self.find('.googlefont-fontpicker');
 		var vis = !$self.is(':visible');
 		$('.googlefont-picker').not( $self.slideToggle() ).slideUp();
-		if (vis && !$list.scrollTop() )
-			$list.scrollTop( $self.find('.googlefont-item.selected').position().top - $list.position().top );
+		$selected = $self.find('.googlefont-item.selected');
+		if (vis && !$list.scrollTop() && $selected.length )
+			$list.scrollTop( $selected.position().top - $list.position().top );
 	});
 	
 	//lifesearch

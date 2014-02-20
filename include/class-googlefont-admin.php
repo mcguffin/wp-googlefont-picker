@@ -8,8 +8,23 @@
 
 
 class Googlefont_Admin {
-
+	private static $tabs = array();
+	
+	
+	private static function _current_tab(){
+		$tabnames = array_keys(self::$tabs);
+		$current_tab = array_shift($tabnames);
+		if ( isset($_REQUEST['tab']) && array_key_exists($_REQUEST['tab'],self::$tabs) )
+			$current_tab = $_REQUEST['tab'];
+		return $current_tab;
+	}
+	
+	
 	public static function init() {
+		self::$tabs = array(
+			'selectors' => __( 'Font Pickers' , 'googlefont' ),
+			'api_access' => __( 'Google API Access' , 'googlefont' ),
+		);
 		add_action('admin_init', array(__CLASS__,'admin_init') );
 		add_action('admin_menu', array(__CLASS__,'add_options_page') );
 	}
@@ -17,20 +32,25 @@ class Googlefont_Admin {
 		self::add_options();
 		
 		add_action('load-settings_page_googlefont',array(__CLASS__,'enqueue_styles'));
-		register_setting( 'googlefont_options', 'googlefont_selectors', array(__CLASS__,'validate_selector') );
-		register_setting( 'googlefont_options', 'googlefont_subset', array(__CLASS__,'validate_subset') );
-		register_setting( 'googlefont_options', 'googlefont_api_key', array(__CLASS__,'validate_api_key') );
-		register_setting( 'googlefont_options', 'googlefont_refresh_period', array(__CLASS__,'validate_refresh_period') );
 		
-		add_settings_section('googlefont_selectors', __( 'Font Pickers' , 'googlefont' ), array(__CLASS__,'explain_fontpickers'), 'googlefont');
-		add_settings_section('googlefont_connectivity', __( 'Google API Access' , 'googlefont' ), array(__CLASS__,'explain_api_access'), 'googlefont');
-//		add_settings_section('googlefont_refresh_period', __( 'Connecting Google' , 'googlefont' ), array(__CLASS__,'periodselect'), 'googlefont');
-
-		add_settings_field('googlefont_subset', __('Subset','googlefont'), array(__CLASS__,'select_subset'), 'googlefont', 'googlefont_selectors');
-		add_settings_field('googlefont_selectors', __('Selectors','googlefont'), array(__CLASS__,'configure_selectors'), 'googlefont', 'googlefont_selectors');
+		switch ( self::_current_tab() ) {
+			case 'selectors':
+				register_setting( 'googlefont_options', 'googlefont_selectors', array(__CLASS__,'validate_selector') );
+				register_setting( 'googlefont_options', 'googlefont_subset', array(__CLASS__,'validate_subset') );
+				
+				add_settings_section('googlefont_selectors', __( 'Font Pickers' , 'googlefont' ), array(__CLASS__,'explain_fontpickers'), 'googlefont_set_selectors');
+				add_settings_field('googlefont_subset', __('Subset','googlefont'), array(__CLASS__,'select_subset'), 'googlefont_set_selectors', 'googlefont_selectors');
+				add_settings_field('googlefont_selectors', __('Selectors','googlefont'), array(__CLASS__,'configure_selectors'), 'googlefont_set_selectors', 'googlefont_selectors');
+				break;
+			case 'api_access':
+				register_setting( 'googlefont_options', 'googlefont_api_key', array(__CLASS__,'validate_api_key') );
+				register_setting( 'googlefont_options', 'googlefont_refresh_period', array(__CLASS__,'validate_refresh_period') );
 		
-		add_settings_field('googlefont_api_key', __('Google API Key','googlefont'), array(__CLASS__,'input_api_key'), 'googlefont', 'googlefont_connectivity');
-		add_settings_field('googlefont_refresh_period', __('Refresh period','googlefont'), array(__CLASS__,'select_refresh_period'), 'googlefont', 'googlefont_connectivity');
+				add_settings_section('googlefont_api_access', __( 'Google API Access' , 'googlefont' ), array(__CLASS__,'explain_api_access'), 'googlefont_set_api_access');
+				add_settings_field('googlefont_api_key', __('Google API Key','googlefont'), array(__CLASS__,'input_api_key'), 'googlefont_set_api_access', 'googlefont_api_access');
+				add_settings_field('googlefont_refresh_period', __('Refresh period','googlefont'), array(__CLASS__,'select_refresh_period'), 'googlefont_set_api_access', 'googlefont_api_access');
+				break;
+		}
 		
 		// add ajax refresh
 		add_action( 'wp_ajax_googlefont_refresh_fontlist', array( __CLASS__ , 'ajax_googlefont_refresh' ) );
@@ -69,17 +89,24 @@ class Googlefont_Admin {
 		);
 	}
 	
+	private static function _nav_tabs() {
+		$current_tab = 'selectors';
+		?><h2 class="nav-tab-wrapper"><?php /*icon*/ 
+			foreach ( self::$tabs as $tab => $label ) {
+				$href = add_query_arg('tab',$tab);
+				?><a href="<?php echo $href ?>" class="nav-tab<?php echo $tab==self::_current_tab() ? ' nav-tab-active' : ''; ?>"><?php echo $label ?></a><?php
+			}
+		?></h2><?php
+	}
+	
 	public static function render_options_page() {
 		?><div class="wrap"><?php
-			?><h2><?php /*icon*/ 
-				_e('Settings');
-				echo ' › '; 
-				_e( 'GoogleFonts' , 'googlefont' ); 
-			?></h2><?php
+			self::_nav_tabs();
 		/*	?><p><?php _e( '...' , 'googlefont' ); ?></p><?php */
 			?><form action="options.php" method="post"><?php
+				?><input type="hidden" name="tab" value="<?php echo self::_current_tab() ?>" /><?php
 				settings_fields( 'googlefont_options' );
-				do_settings_sections( 'googlefont' ); 
+				do_settings_sections( 'googlefont_set_'.self::_current_tab() ); 
 				?><input name="submit" class="button button-primary" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" /><?php
 			?></form><?php
 		?></div><?php
@@ -171,6 +198,7 @@ class Googlefont_Admin {
 			'description' => '',
 			'filter' => false,
 			'active' => true,
+			'show_styles' => true,
 		));
 		extract($selector);
 		$cb =  $filter ? $filter->callback[1] : false;
@@ -235,11 +263,27 @@ class Googlefont_Admin {
 						?></td><?php
 					?></tr><?php
 					
+					// active
+					?><tr><?php
+						?><th><?php
+							?><label for="selector-show-styles-<?php echo $i ?>"><?php
+								_ex('Show Styles','selector','googlefont');
+							?></label><?php
+						?></th><?php
+						?><td><?php
+							?><input type="hidden" name="googlefont_selectors[<?php echo $i ?>][show_styles]" value="0" /><?php
+							?><input id="selector-show-styles-<?php echo $i ?>" type="checkbox" name="googlefont_selectors[<?php echo $i ?>][show_styles]" <?php checked($show_styles) ?> value="1" /><?php
+							?><label for="selector-show-styles-<?php echo $i ?>"><?php
+								_ex('Will show a style selection','selector','googlefont');
+							?></label><?php
+						?></td><?php
+					?></tr><?php
+					
 					// Filter
 					?><tr><?php
 						?><th><?php
 							?><label><?php
-								_e('Filter Styles','googlefont') 
+								_e('Filter Font list','googlefont') 
 							?></label><?php
 						?></th><?php
 						?><td><?php
@@ -288,6 +332,7 @@ class Googlefont_Admin {
 				'label'=>__('Accent font','googlefont'),
 				'css_selector'=>'h1,h2,h3,h4,h5,h6,.entry-title,#site-title,#main-nav select' , // travelify selector
 				'description'=>__('Font for Headlines, page-header.','googlefont'),
+				'show_styles' => true,
 				'active' => true,
 			),
 		);

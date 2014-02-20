@@ -6,6 +6,12 @@
 .googlefont-dummy-container {
 	display:none;
 }
+	.googlefont-selector-item.postbox {
+		margin:0;
+	}
+	.googlefont-selector-item.closed {
+		
+	}
 	.googlefont-selector-item span.selector-label {
 		display:none;
 	}
