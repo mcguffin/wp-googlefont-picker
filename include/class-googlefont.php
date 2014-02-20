@@ -57,7 +57,6 @@ class Googlefont {
 	
 			foreach( $wp_styles->registered as $key => $dep ) {
 				if ( $key !== 'googlefont' && preg_match( '/\/\/fonts\.googleapis\.com\/css/' , $dep->src ) ) {
-					wp_deregister_style( $key );
 					wp_dequeue_style( $key );
 				}
 			}
