@@ -48,32 +48,9 @@ obaining all meta information would take 5 minutes, and cause a php timeout.
 The result: Support requests, lots of one-star-ratings, sadness and despair plus global warming due to 
 increased computing activity. Save the World. Don't make me implement style filtering.
 
-### I found a bug. Where should I post it? ###
-
-I personally prefer GitHub. The plugin code is here: [GitHub](https://github.com/mcguffin/wp-googlefont-picker)
-(See below as well.)
-
-= I'd like to suggest a feature. Where should I post it? =
-
-I personally prefer GitHub. The plugin code is here: [GitHub](https://github.com/mcguffin/wp-googlefont-picker)
-(See above as well.)
-
-### I want to use the latest files. How can I do this? ###
-
-Use the GitHub Repo rather than the WordPress Plugin. Do as follows:
-1. If you haven't done so: [Install git](https://help.github.com/articles/set-up-git)
-2. in the console cd into Your 'wp-content/plugins' directory
-3. type 'git clone git@github.com:mcguffin/wp-revision-request.git'
-4. If you want to update to the latest files (be careful, might be untested on Your WP-Version) type 'git pull'.
-
-= I found a bug and fixed it. How can I let You know? =
-
-Either post it on the [GitHub-repo](https://github.com/mcguffin/wp-googlefont-picker) or—if you cloned the repository—send me a pull request.
-
-== Screenshots ==
-
-== Plugin API ==
+Plugin API
+----------
 
 The plugin offers some filters to allow themes and other plugins to hook in.
 
-Visit the [GitHub-Repo](https://github.com/mcguffin/wp-googlefont-picker) for details.
+### Action googlefont_init ###
