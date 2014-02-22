@@ -67,6 +67,7 @@ class Googlefont {
 	// get style names from URL parameters
 	// -------------------------------------------------------
 	public function get_gfont_styles_name( $url_param ) {
+		require_once 'class-googlefont-api.php';
 		$font_list = Googlefont_Api::get_instance( );
 		$fonts = explode('|',$url_param);
 		$ret = array();
@@ -81,6 +82,7 @@ class Googlefont {
 	// get URL parameters for google font load
 	// -------------------------------------------------------
 	public function get_gfont_url_param() {
+		require_once 'class-googlefont-api.php';
 		
 		$args = func_get_args();
 		if ( is_array($args[0]) )
@@ -115,12 +117,22 @@ class Googlefont {
 	//	load googlefont stylesheet. Print custom stylesheets
 	// -------------------------------------------------------
 	public function enqueue_font_css() {
-		if ( isset($_POST['customized']) ) {
+		if ( ! isset($_POST['customized']) ) {
+			$css = get_option( sprintf( 'googlefont_%s_css' , get_option('stylesheet') ) );
+			if ( ! $css ) {
+				$css = $this->get_css( );
+				update_option( sprintf( 'googlefont_%s_css' , get_option('stylesheet') ) , $css );
+			}
+			
+			$google_font_url = get_option( sprintf( 'googlefont_%s_fonturl' , get_option('stylesheet') ) );
+			if ( ! $google_font_url ) {
+				$google_font_url = $this->get_googlefont_url( );
+				update_option( sprintf( 'googlefont_%s_fonturl' , get_option('stylesheet') ) , $google_font_url );
+			}
+			
+		} else {
 			$css = $this->get_css();
 			$google_font_url = $this->get_googlefont_url( );
-		} else {
-			$css = get_option( sprintf( 'googlefont_%s_css' , get_option('stylesheet') ) );
-			$google_font_url = get_option( sprintf( 'googlefont_%s_fonturl' , get_option('stylesheet') ) );
 		}
 		if ( $google_font_url && $css ) {
 			wp_enqueue_style( 'googlefont', $google_font_url );

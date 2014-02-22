@@ -461,6 +461,7 @@ class Googlefont_Admin {
 	}
 	public static function unset_cached_css( $old_value , $new_value ) {
 		delete_option( sprintf( 'googlefont_%s_css' , get_option('stylesheet') ) );
+		delete_option( sprintf( 'googlefont_%s_fonturl' , get_option('stylesheet') ) );
 	}
 	
 }

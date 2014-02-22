@@ -12,8 +12,6 @@ class Googlefont_Picker {
 
 		add_action('wp_ajax_googlefont_add_favorite',array( &$this , 'ajax_add_to_favorites' ));
 		add_action('customize_controls_print_scripts',array(  &$this , 'print_ajax_url' ));
-
-		add_action('customize_save_after' , array( &$this , 'save_options') );
 	}
 	
 	// -------------------------------------------
@@ -80,16 +78,5 @@ class Googlefont_Picker {
 		}
 	}
 	
-	
-	// -------------------------------------------
-	//	Flush to options for quick access to settings
-	// -------------------------------------------
-	public function save_options() {
-		global $googlefont;
-		$css = $googlefont->get_css( );
-		$google_font_url = $googlefont->get_googlefont_url( );
-		update_option( sprintf( 'googlefont_%s_css' , get_option('stylesheet') ) , $css );
-		update_option( sprintf( 'googlefont_%s_fonturl' , get_option('stylesheet') ) , $google_font_url );
-	}
 }
 $googlefont_picker = new Googlefont_Picker();
