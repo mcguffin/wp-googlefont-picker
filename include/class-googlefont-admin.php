@@ -331,7 +331,7 @@ class Googlefont_Admin {
 			array(
 				'name'=>'accent_font' , // accent font pattern
 				'label'=>__('Accent font','googlefont'),
-				'css_selector'=>'h1,h2,h3,h4,h5,h6,.entry-title,#site-title,#main-nav select' , // travelify selector
+				'css_selector'=>'h1,h2,h3,h4,h5,h6,.entry-title,#site-title,.widget .widget-title,.comment-reply-title,.comments-title,#main-nav select' , // travelify selector
 				'description'=>__('Font for Headlines, page-header.','googlefont'),
 				'show_styles' => true,
 				'active' => true,

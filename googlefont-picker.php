@@ -9,7 +9,7 @@ Plugin Name: WP GoogleFont Picker
 Plugin URI: https://github.com/mcguffin/wp-googlefont-picker
 Description: Pick some GoogleFonts to pretty up your website. The Plugin hooks into WP Theme Customizer.
 Author: Joern Lund
-Version: 0.0.3
+Version: 0.0.4
 Author URI: https://github.com/mcguffin/
 
 Text Domain: googlefont
