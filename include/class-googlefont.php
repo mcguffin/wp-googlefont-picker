@@ -117,27 +117,11 @@ class Googlefont {
 	//	load googlefont stylesheet. Print custom stylesheets
 	// -------------------------------------------------------
 	public function enqueue_font_css() {
-		if ( ! isset($_POST['customized']) ) {
-			// get cached values for css + font url
-			$css = get_option( sprintf( 'googlefont_%s_css' , get_option('stylesheet') ) );
-			if ( empty($css) ) {
-				$css = $this->get_css( );
-				update_option( sprintf( 'googlefont_%s_css' , get_option('stylesheet') ) , $css );
-			}
-			
-			$google_font_url = get_option( sprintf( 'googlefont_%s_fonturl' , get_option('stylesheet') ) );
-			if ( ! $this->is_valid_font_url( $google_font_url ) ) {
-				$google_font_url = $this->get_googlefont_url( );
-				update_option( sprintf( 'googlefont_%s_fonturl' , get_option('stylesheet') ) , $google_font_url );
-			}
-			
-		} else {
-			// always generate css + font url from get_theme_mod
-			$css = $this->get_css();
-			$google_font_url = $this->get_googlefont_url( );
-		}
-		
-		if ( ! empty( $google_font_url ) && ! empty( $css ) ) {
+		// need some way to a) cache it, b) make sure css and font list match
+		$css = $this->get_css();
+		$google_font_url = $this->get_googlefont_url( );
+
+		if ( ! $this->is_valid_font_url( $google_font_url ) && ! empty( $css ) ) {
 			wp_enqueue_style( 'googlefont', $google_font_url );
 			add_action('wp_head',create_function('','echo "<style type=\"text/css\">'. $css .'</style>";'));
 		}
@@ -204,7 +188,7 @@ class Googlefont {
 		return $ret;
 	}
 	private function is_valid_font_url( $font_url ) {
-		return (bool) preg_match( '/^\/\/fonts\.googleapis\.com\/css\?family=(\w+)/' , $font_url );
+		return (bool) preg_match( '/\/\/fonts\.googleapis\.com\/css\?family=(\w+)/' , $font_url );
 	}
 }
 global $googlefont;
