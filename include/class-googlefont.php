@@ -169,7 +169,7 @@ class Googlefont {
 	
 		$upar = $this->get_gfont_url_param( $mods );
 		if ( ! empty( $upar ) )
-			$google_font_url = 'http'.(is_ssl()?'s':'').'://fonts.googleapis.com/css?family='.$upar ;
+			$google_font_url = '//fonts.googleapis.com/css?family='.$upar ;
 		else
 			$google_font_url = false;
 		return $google_font_url;
@@ -204,7 +204,7 @@ class Googlefont {
 		return $ret;
 	}
 	private function is_valid_font_url( $font_url ) {
-		return (bool) preg_match( '/\/\/fonts\.googleapis\.com\/css\?family=(\w+)/' , $font_url );
+		return (bool) preg_match( '/^\/\/fonts\.googleapis\.com\/css\?family=(\w+)/' , $font_url );
 	}
 }
 global $googlefont;
