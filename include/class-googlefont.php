@@ -121,7 +121,7 @@ class Googlefont {
 		$css = $this->get_css();
 		$google_font_url = $this->get_googlefont_url( );
 
-		if ( ! $this->is_valid_font_url( $google_font_url ) && ! empty( $css ) ) {
+		if ( $this->is_valid_font_url( $google_font_url ) && ! empty( $css ) ) {
 			wp_enqueue_style( 'googlefont', $google_font_url );
 			add_action('wp_head',create_function('','echo "<style type=\"text/css\">'. $css .'</style>";'));
 		}
