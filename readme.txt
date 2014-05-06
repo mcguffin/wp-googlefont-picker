@@ -19,7 +19,7 @@ Latest files on [GitHub](https://github.com/mcguffin/wp-googlefont-picker).
 
 == Installation ==
 
-1. Upload the 'wp-revision-request.zip' to the `/wp-content/plugins/` directory and unzip it.
+1. Upload the Zip file to the `/wp-content/plugins/` directory and unzip it.
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Optional: Get a google API Key, go to Settings and stay tuned with the latest google webfonts.
 
