@@ -5,66 +5,88 @@
 - button: back to default values
 */
 
-
+if ( ! class_exists('Googlefont_Admin') ) :
 
 class Googlefont_Admin {
-	private static $tabs = array();
+	private $tabs = array();
 	
+	/**
+	 *	Holding the singleton instance
+	 */
+	private $_instance = null;
+
+	/**
+	 *	@return WP_reCaptcha_Options The options manager instance
+	 */
+	public function instance() {
+		if ( is_null( self::$_instance ) )
+			self::$_instance = new self();
+		return self::$_instance;
+	}
+
+	/**
+	 *	Prevent from creating more than one instance
+	 */
+	private function __clone() {
+	}
+	/**
+	 *	Prevent from creating more than one instance
+	 */
+	private function __construct() {
+		$this->tabs = array(
+			'selectors' => __( 'Font Pickers' , 'googlefont' ),
+			'api_access' => __( 'Google API Access' , 'googlefont' ),
+		);
+		add_action('admin_init', array( &$this ,'admin_init') );
+		add_action('admin_menu', array( &$this ,'add_options_page') );
+	}
 	
-	private static function _current_tab(){
-		$tabnames = array_keys(self::$tabs);
+	private function _current_tab(){
+		$tabnames = array_keys($this->tabs);
 		$current_tab = array_shift($tabnames);
-		if ( isset($_REQUEST['tab']) && array_key_exists($_REQUEST['tab'],self::$tabs) )
+		if ( isset($_REQUEST['tab']) && array_key_exists($_REQUEST['tab'],$this->tabs) )
 			$current_tab = $_REQUEST['tab'];
 		return $current_tab;
 	}
 	
 	
-	public static function init() {
-		self::$tabs = array(
-			'selectors' => __( 'Font Pickers' , 'googlefont' ),
-			'api_access' => __( 'Google API Access' , 'googlefont' ),
-		);
-		add_action('admin_init', array(__CLASS__,'admin_init') );
-		add_action('admin_menu', array(__CLASS__,'add_options_page') );
-	}
-	public static function admin_init() {
-		self::add_options();
+	public function admin_init() {
+		$this->add_options();
 		
-		add_action('load-settings_page_googlefont',array(__CLASS__,'enqueue_styles'));
+		add_action('load-settings_page_googlefont',array( &$this ,'enqueue_styles'));
 		
-		switch ( self::_current_tab() ) {
+		switch ( $this->_current_tab() ) {
 			case 'selectors':
-				register_setting( 'googlefont_options', 'googlefont_selectors', array(__CLASS__,'validate_selector') );
-				register_setting( 'googlefont_options', 'googlefont_subset', array(__CLASS__,'validate_subset') );
+				register_setting( 'googlefont_options', 'googlefont_selectors', array( &$this ,'validate_selector') );
+				register_setting( 'googlefont_options', 'googlefont_subset', array( &$this ,'validate_subset') );
 				
-				add_settings_section('googlefont_selectors', __( 'Font Pickers' , 'googlefont' ), array(__CLASS__,'explain_fontpickers'), 'googlefont_set_selectors');
-				add_settings_field('googlefont_subset', __('Subset','googlefont'), array(__CLASS__,'select_subset'), 'googlefont_set_selectors', 'googlefont_selectors');
-				add_settings_field('googlefont_selectors', __('Selectors','googlefont'), array(__CLASS__,'configure_selectors'), 'googlefont_set_selectors', 'googlefont_selectors');
+				add_settings_section('googlefont_selectors', __( 'Font Pickers' , 'googlefont' ), array( &$this ,'explain_fontpickers'), 'googlefont_set_selectors');
+				add_settings_field('googlefont_subset', __('Subset','googlefont'), array( &$this ,'select_subset'), 'googlefont_set_selectors', 'googlefont_selectors');
+				add_settings_field('googlefont_selectors', __('Selectors','googlefont'), array( &$this ,'configure_selectors'), 'googlefont_set_selectors', 'googlefont_selectors');
 				break;
 			case 'api_access':
-				register_setting( 'googlefont_options', 'googlefont_api_key', array(__CLASS__,'validate_api_key') );
-				register_setting( 'googlefont_options', 'googlefont_refresh_period', array(__CLASS__,'validate_refresh_period') );
+				register_setting( 'googlefont_options', 'googlefont_api_key', array( &$this ,'validate_api_key') );
+				register_setting( 'googlefont_options', 'googlefont_refresh_period', array( &$this ,'validate_refresh_period') );
 		
-				add_settings_section('googlefont_api_access', __( 'Google API Access' , 'googlefont' ), array(__CLASS__,'explain_api_access'), 'googlefont_set_api_access');
-				add_settings_field('googlefont_api_key', __('Google API Key','googlefont'), array(__CLASS__,'input_api_key'), 'googlefont_set_api_access', 'googlefont_api_access');
-				add_settings_field('googlefont_refresh_period', __('Refresh period','googlefont'), array(__CLASS__,'select_refresh_period'), 'googlefont_set_api_access', 'googlefont_api_access');
+				add_settings_section('googlefont_api_access', __( 'Google API Access' , 'googlefont' ), array( &$this ,'explain_api_access'), 'googlefont_set_api_access');
+				add_settings_field('googlefont_api_key', __('Google API Key','googlefont'), array( &$this ,'input_api_key'), 'googlefont_set_api_access', 'googlefont_api_access');
+				add_settings_field('googlefont_refresh_period', __('Refresh period','googlefont'), array( &$this ,'select_refresh_period'), 'googlefont_set_api_access', 'googlefont_api_access');
 				break;
 		}
 		
 		// add ajax refresh
-		add_action( 'wp_ajax_googlefont_refresh_fontlist', array( __CLASS__ , 'ajax_googlefont_refresh' ) );
+		add_action( 'wp_ajax_googlefont_refresh_fontlist', array(  &$this  , 'ajax_googlefont_refresh' ) );
 		// add cron
-		add_action('update_option_googlefont_refresh_period' , array(__CLASS__,'set_refresh_cron'),10,2);
-		add_action('update_option_googlefont_selectors' , array(__CLASS__,'unset_cached_css'),10,2);
+		add_action('update_option_googlefont_refresh_period' , array( &$this ,'set_refresh_cron'),10,2);
+		add_action('update_option_googlefont_selectors' , array( &$this ,'unset_cached_css'),10,2);
 	}
 
-	public static function ajax_googlefont_refresh() {
+	public function ajax_googlefont_refresh() {
 		if ( wp_verify_nonce(@$_POST['_wp_ajax_nonce'] , 'googlefont_refresh' ) && current_user_can( 'manage_options' ) ) {
 			// refresh font list
 			$fonts_before = count(json_decode(get_option( '_googlefont_fontlist' ))->items);
 			header( 'Content-Type: application/json' );
-			$api = Googlefont_Api::get_instance();
+			$api = Googlefont_Api::instance();
 			$fonts_after = count(json_decode(get_option( '_googlefont_fontlist' ))->items);
 			echo json_encode( (object) array(
 				'success' 	=> $api->refresh( get_option( 'googlefont_api_key' ) ),
@@ -77,37 +99,37 @@ class Googlefont_Admin {
 		die();
 	}
 	
-	public static function enqueue_styles() {
+	public function enqueue_styles() {
 		wp_enqueue_script( 'googlefont-admin', plugins_url( '/js/googlefont-admin.js' , dirname(__FILE__) ) , array('jquery','jquery-ui-sortable') ) ;
 		wp_enqueue_style( 'googlefont-admin', plugins_url( '/css/googlefont-admin.css' , dirname(__FILE__) )  );
 	}
 	
-	public static function add_options_page() {
+	public function add_options_page() {
 		add_options_page( 
 			__('Googlefont Options','googlefont'), __('Googlefonts','googlefont'), 
 			'manage_options', 'googlefont', 
-			array(__CLASS__,'render_options_page')
+			array( &$this ,'render_options_page')
 		);
 	}
 	
-	private static function _nav_tabs() {
+	private function _nav_tabs() {
 		$current_tab = 'selectors';
 		?><h2 class="nav-tab-wrapper"><?php /*icon*/ 
-			foreach ( self::$tabs as $tab => $label ) {
+			foreach ( $this->tabs as $tab => $label ) {
 				$href = add_query_arg('tab',$tab);
-				?><a href="<?php echo $href ?>" class="nav-tab<?php echo $tab==self::_current_tab() ? ' nav-tab-active' : ''; ?>"><?php echo $label ?></a><?php
+				?><a href="<?php echo $href ?>" class="nav-tab<?php echo $tab==$this->_current_tab() ? ' nav-tab-active' : ''; ?>"><?php echo $label ?></a><?php
 			}
 		?></h2><?php
 	}
 	
-	public static function render_options_page() {
+	public function render_options_page() {
 		?><div class="wrap"><?php
-			self::_nav_tabs();
+			$this->_nav_tabs();
 		/*	?><p><?php _e( '...' , 'googlefont' ); ?></p><?php */
 			?><form action="options.php" method="post"><?php
-				?><input type="hidden" name="tab" value="<?php echo self::_current_tab() ?>" /><?php
+				?><input type="hidden" name="tab" value="<?php echo $this->_current_tab() ?>" /><?php
 				settings_fields( 'googlefont_options' );
-				do_settings_sections( 'googlefont_set_'.self::_current_tab() ); 
+				do_settings_sections( 'googlefont_set_'.$this->_current_tab() ); 
 				?><input name="submit" class="button button-primary" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" /><?php
 			?></form><?php
 		?></div><?php
@@ -115,7 +137,7 @@ class Googlefont_Admin {
 	
 	
 	// Section rendering
-	public static function explain_fontpickers( ) {
+	public function explain_fontpickers( ) {
 		?><p class="description"><?php 
 			_e('In this section You can configure, which Font controls a User will be avaliable during theme customization.','googlefont');
 			?><br /><?php
@@ -124,7 +146,7 @@ class Googlefont_Admin {
 	}
 	
 	// Section rendering
-	public static function explain_api_access( ) {
+	public function explain_api_access( ) {
 		?><p class="description"><?php 
 			_e('To stay tuned to the latest avaliable Google Web Fonts you need an API Key. <a href="https://code.google.com/apis/console/">Click here to get one.</a>','googlefont');
 			?><br /><?php
@@ -139,11 +161,11 @@ class Googlefont_Admin {
 	// The CSS Selectors very much depend on Your Theme, so the default values won't work every time. You better come up with a little css knowledge, or at least find somebody who can help you out.
 	
 	
-	public static function input_api_key() {
+	public function input_api_key() {
 		$api_key = get_option('googlefont_api_key');
 		?><input type="text" name="googlefont_api_key" value="<?php echo $api_key ?>" /><?php
 	}
-	public static function select_refresh_period() {
+	public function select_refresh_period() {
 		
 		$options = array(
 			'manual' => __('Manual', 'googlefont'),
@@ -162,8 +184,8 @@ class Googlefont_Admin {
 			?><input name="googlefont[refresh]" id="googlefont-refresh-now" class="hide-if-no-js button button-secondary" type="submit" value="<?php esc_attr_e('Refresh now','googlefont'); ?>" /><?php
 		}
 	}
-	public static function select_subset() {
-		$subsets = Googlefont_API::get_instance()->get_available_subsets();
+	public function select_subset() {
+		$subsets = Googlefont_API::instance()->get_available_subsets();
 		$subset = get_option('googlefont_subset');
 		
 		?><select name="googlefont_subset"><?php
@@ -173,17 +195,17 @@ class Googlefont_Admin {
 			}
 		?></select><?php
 	}
-	public static function configure_selectors() {
+	public function configure_selectors() {
 		$selectors = get_option('googlefont_selectors');
 		
 		// add dummy picker to clone
 		
 		?><div id="googlefont-selectors" class="googlefont-selectors metabox-holder meta-box-sortables"><?php
 		foreach ($selectors as $i => $selector )
-			self::print_selector( $selector , $i );
+			$this->print_selector( $selector , $i );
 		?></div><?php
 		?><div id="googlefont-dummy-container" class="googlefont-dummy-container"><?php
-			self::print_selector();
+			$this->print_selector();
 		?></div><?php
 		?><p class="submit"><a href="#" id="googlefont-add-selector" class="button"><?php _e('Add Font Picker','googlefont') ?></a></p><?php
 		?><script type="text/javascript">
@@ -191,7 +213,7 @@ class Googlefont_Admin {
 		</script><?php
 	}
 	
-	private static function print_selector( $selector = array() , $i = '__DUMMY__' ) {
+	private function print_selector( $selector = array() , $i = '__DUMMY__' ) {
 		$selector = wp_parse_args($selector , array(
 			'name' => 'font-picker-'.$i,
 			'label' => __('New Font Picker'),
@@ -314,7 +336,7 @@ class Googlefont_Admin {
 	
 	
 	
-	public static function add_options() {
+	public function add_options() {
 		$default_selectors = array(
 			array(
 				'name'=>'base_font',
@@ -346,7 +368,7 @@ class Googlefont_Admin {
 		
 		// add option
 	}
-	public static function remove_options() {
+	public function remove_options() {
 		delete_option( 'googlefont_api_key' );
 		delete_option( 'googlefont_selectors' );
 		delete_option( 'googlefont_subset' );
@@ -355,21 +377,21 @@ class Googlefont_Admin {
 		// frontend opts!
 	}
 	
-	public static function validate_api_key( $input ) {
+	public function validate_api_key( $input ) {
 		if ( ! empty($input) ) {
 			if (preg_match( '/[^a-zA-Z0-9-_]/' , $input)) {
 				// put some error message: Malformed API-Key
 				add_settings_error( 'googlefont_api_key', 1, __( 'Invalid API-Key.','googlefont' ), 'error' );
 				return get_option('googlefont_api_key');
 			}
-			if ( ! Googlefont_Api::get_instance()->refresh( $input ) ) {
+			if ( ! Googlefont_Api::instance()->refresh( $input ) ) {
 				add_settings_error( 'googlefont_api_key', 2, __( 'API-Key was not accepted by Google.','googlefont' ), 'error' );
 				return get_option('googlefont_api_key');
 			}
 		}
 		return $input;
 	}
-	public static function validate_selector( $input ) {
+	public function validate_selector( $input ) {
 		$okay = true;
 		$style_filters = array(
 			'by_b'		=> array( 'regular' , 'italic' ),
@@ -428,8 +450,8 @@ class Googlefont_Admin {
 		return $return;
 	}
 	
-	public static function validate_subset( $input ) {
-		$subsets = Googlefont_API::get_instance()->get_available_subsets();
+	public function validate_subset( $input ) {
+		$subsets = Googlefont_API::instance()->get_available_subsets();
 		if ( ! in_array( $input , $subsets ) ) {
 			add_settings_error( 'googlefont_subset', 3, __( 'Invalid subset.','googlefont' ), 'error' );
 			$subset = get_option('googlefont_subset');
@@ -438,7 +460,7 @@ class Googlefont_Admin {
 		}
 		return $subset;
 	}
-	public static function validate_refresh_period( $input ) {
+	public function validate_refresh_period( $input ) {
 		if ( ! in_array( $input , array( 'manual' ,'monthly','weekly','yearly' ) ) ) {
 			add_settings_error( 'googlefont_api_key', 3, __( 'Invalid refresh period. How did you manage that?','googlefont' ), 'error' );
 			return get_option('googlefont_refresh_period');
@@ -449,7 +471,7 @@ class Googlefont_Admin {
 		return $input;
 	}
 	
-	public static function set_refresh_cron( $old_value , $new_value ) {
+	public function set_refresh_cron( $old_value , $new_value ) {
 		// set new cron, clear the old one.
 		$old_cron_task_hook = "calendar_cron_{$old_value}";
 		$new_cron_task_hook = "calendar_cron_{$new_value}";
@@ -459,14 +481,14 @@ class Googlefont_Admin {
 
 		$res = wp_schedule_event( time(), $new_value , $new_cron_task_hook );
 	}
-	public static function unset_cached_css( $old_value , $new_value ) {
+	public function unset_cached_css( $old_value , $new_value ) {
 		delete_option( sprintf( 'googlefont_%s_css' , get_option('stylesheet') ) );
 		delete_option( sprintf( 'googlefont_%s_fonturl' , get_option('stylesheet') ) );
 	}
 	
 }
-Googlefont_Admin::init();
+Googlefont_Admin::instance();
 
-
+endif;
 
 ?>

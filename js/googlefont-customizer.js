@@ -1,4 +1,5 @@
-jQuery(document).ready(function($){
+(function($){
+
 	$(document).on('click','.googlefont-pick-family',function(){
 		// set value
 		var $this = $(this);
@@ -25,8 +26,7 @@ jQuery(document).ready(function($){
 					.val( $control.val().replace(/^([^:]*)(.*)$/,'$1:'+style )  )
 					.trigger('change');
 		}
-	});
-	$('.googlefont-pick-style').live('click' , function() {
+	}).on('click' , '.googlefont-pick-style' , function() {
 		var $this = $(this);
 		if ($this.is(':checked')) {
 			var $control = $this.closest('.googlefont-picker')
@@ -35,10 +35,7 @@ jQuery(document).ready(function($){
 				.val( $control.val().replace(/^([^:]*)(.*)$/,'$1:'+$this.val() )  )
 				.trigger('change');
 		}
-	});
-	
-	// show / fontbox
-	$('.googlefont-picker-label').click(function() {
+	}).on('click','.googlefont-picker-label',function() {
 		var $self = $(this).next('.googlefont-picker');
 		var $list = $self.find('.googlefont-fontpicker');
 		var vis = !$self.is(':visible');
@@ -46,10 +43,7 @@ jQuery(document).ready(function($){
 		$selected = $self.find('.googlefont-item.selected');
 		if (vis && !$list.scrollTop() && $selected.length )
 			$list.scrollTop( $selected.position().top - $list.position().top );
-	});
-	
-	//lifesearch
-	$('.googlefont-filter').bind('keyup click',function() {
+	}).on('keyup click','.googlefont-filter' , function() {
 		$this = $(this);
 		if ( !! $this.val() )
 			$this.closest('.googlefont-picker').find('.googlefont-fontpicker')
@@ -62,15 +56,12 @@ jQuery(document).ready(function($){
 				.find('.googlefont-item')
 				.removeAttr('style');
 		
-	});
-	$('.filter.favorite').click(function() {
+	} ).on('click','.filter.favorite',function() {
 		$(this)
 			.closest('.googlefont-picker')
 			.toggleClass('nofavs');
 		
-	})
-	
-	$('.googlefont-item .favorite').click(function(){
+	}).on('click','.googlefont-item .favorite',function(){
 		var font = $(this).closest('.googlefont-item')
 			.toggleClass('fav')
 			.find('.googlefont-pick-family').val();
@@ -89,8 +80,15 @@ jQuery(document).ready(function($){
 			$allSuchFonts.removeClass('fav');
 		return false;
 	});
-	
+
+
+})(jQuery);
+
+
+
+jQuery(document).ready(function($){
 });
+
 // 
 if ( jQuery.expr.createPseudo )  {
 jQuery.expr[":"].icontains = jQuery.expr.createPseudo(function (arg) {                                                                                                                                                                

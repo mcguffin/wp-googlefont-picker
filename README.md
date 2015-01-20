@@ -54,3 +54,11 @@ Plugin API
 The plugin offers some filters to allow themes and other plugins to hook in.
 
 ### Action googlefont_init ###
+
+
+
+ToDo:
+-----
+- Rename Plugin textdomain, lang directory
+- Autoload classes
+- Singletons

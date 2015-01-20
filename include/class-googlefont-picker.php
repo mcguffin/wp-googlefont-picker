@@ -3,8 +3,29 @@
 class Googlefont_Picker {
 	// on 'admin_init'
 
-	public function __construct( ) {
-		global $googlefont;
+	/**
+	 *	Holding the singleton instance
+	 */
+	private static $_instance = null;
+
+	/**
+	 *	@return WP_reCaptcha_Options The options manager instance
+	 */
+	public static function instance(){
+		if ( is_null( self::$_instance ) )
+			self::$_instance = new self();
+		return self::$_instance;
+	}
+
+	/**
+	 *	Prevent from creating more than one instance
+	 */
+	private function __clone() {
+	}
+	/**
+	 *	Prevent from creating more than one instance
+	 */
+	private function __construct() {
 		
 		add_action( 'customize_register', array( &$this , 'customize_register' ) );
 		add_action( 'customize_controls_enqueue_scripts', array( &$this , 'enqueue_customize_scripts' ) );
@@ -51,7 +72,7 @@ class Googlefont_Picker {
 	//	Customizer init
 	// -------------------------------------------
 	public function customize_register( $wp_customize ) {
-		global $googlefont;
+		$googlefont = Googlefont::instance();
 		include_once plugin_dir_path( __FILE__ ).'/class-customize_fontpicker_control.php';
 		$selectors = $googlefont->get_selectors();
 
@@ -79,4 +100,4 @@ class Googlefont_Picker {
 	}
 	
 }
-$googlefont_picker = new Googlefont_Picker();
+Googlefont_Picker::instance();
