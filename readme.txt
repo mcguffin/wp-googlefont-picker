@@ -3,7 +3,7 @@ Contributors: podpirate
 //Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CXETZUWYAAVC8
 Tags: fonts,theme,googlefont,webfont,design,typography
 Requires at least: 3.6
-Tested up to: 3.6.1
+Tested up to: 3.9
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -13,7 +13,6 @@ Choose some nice Google Webfont on your blog.
 == Description ==
 
 - Works out of the box.
-- 
 
 Latest files on [GitHub](https://github.com/mcguffin/wp-googlefont-picker).
 
@@ -76,7 +75,7 @@ I personally prefer GitHub. The plugin code is here: [GitHub](https://github.com
 Use the GitHub Repo rather than the WordPress Plugin. Do as follows:
 1. If you haven't done so: [Install git](https://help.github.com/articles/set-up-git)
 2. in the console cd into Your 'wp-content/plugins' directory
-3. type 'git clone git@github.com:mcguffin/wp-revision-request.git'
+3. type 'git clone git@github.com:mcguffin/wp-googlefont-picker.git'
 4. If you want to update to the latest files (be careful, might be untested on Your WP-Version) type 'git pull'.
 
 = I found a bug and fixed it. How can I let You know? =
