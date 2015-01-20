@@ -282,7 +282,7 @@ class Googlefont_Admin {
 							?></label><?php
 						?></th><?php
 						?><td><?php
-							?><input id="selector-css-selector-<?php echo $i ?>" type="text" class="large-text code" name="googlefont_selectors[<?php echo $i ?>][css_selector]" value="<?php echo $css_selector ?>" /><?php
+							?><input id="selector-css-selector-<?php echo $i ?>" type="text" class="large-text code" name="googlefont_selectors[<?php echo $i ?>][css_selector]" value="<?php echo esc_attr($css_selector) ?>" /><?php
 						?></td><?php
 					?></tr><?php
 					
@@ -353,7 +353,7 @@ class Googlefont_Admin {
 			array(
 				'name'=>'accent_font' , // accent font pattern
 				'label'=>__('Accent font','googlefont'),
-				'css_selector'=>'h1,h2,h3,h4,h5,h6,.entry-title,#site-title,.widget .widget-title,.comment-reply-title,.comments-title,#main-nav select' , // travelify selector
+				'css_selector'=>'h1,h2,h3,h4,h5,h6,.entry-title,#site-title,.site-title,.widget .widget-title,.comment-reply-title,.comments-title,#main-nav select' , // travelify selector
 				'description'=>__('Font for Headlines, page-header.','googlefont'),
 				'show_styles' => true,
 				'active' => true,

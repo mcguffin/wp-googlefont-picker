@@ -35,7 +35,7 @@ class Googlefont {
 		if ( $selectors = get_option( 'googlefont_selectors' ) )
 			foreach ( $selectors as $selector_args )
 				Googlefont::register_font_selector( $selector_args );
-		
+
 		add_action( 'wp_enqueue_scripts' , array(&$this,'enqueue_font_css') , 1 );
 		add_action( 'admin_print_styles-appearance_page_custom-header', array(&$this,'googlefont_dequeue_gfont') , 99 ); // fct: dequeue twentythirteen-fonts, enqueue own fonts
 		add_action( 'wp_enqueue_scripts',  array(&$this,'googlefont_dequeue_gfont') , 99 );
@@ -77,9 +77,8 @@ class Googlefont {
 		global $wp_styles;
 
 		if ( is_a( $wp_styles, 'WP_Styles' ) ) {
-	
 			foreach( $wp_styles->registered as $key => $dep ) {
-				if ( $key !== 'googlefont' && preg_match( '/\/\/fonts\.googleapis\.com\/css/' , $dep->src ) ) {
+				if ( $key !== 'wp-googlefont-picker-load' && preg_match( '/\/\/fonts\.googleapis\.com\/css/' , $dep->src ) ) {
 					wp_dequeue_style( $key );
 				}
 			}
@@ -140,14 +139,17 @@ class Googlefont {
 		// need some way to a) cache it, b) make sure css and font list match
 		$css = $this->get_css();
 		$google_font_url = $this->get_googlefont_url( );
-
 		if ( $this->is_valid_font_url( $google_font_url ) && ! empty( $css ) ) {
-			wp_enqueue_style( 'googlefont', $google_font_url );
-			add_action('wp_head',create_function('','echo "<style type=\"text/css\">'. $css .'</style>";'));
+			wp_enqueue_style( 'wp-googlefont-picker-load', $google_font_url );
+			add_action('wp_head',array( $this , 'print_font_css' ) );
 		}
 	}
 	
-	
+	public function print_font_css() {
+		?><style id="wp-googlefont-picker-css" type="text/css">
+		<?php echo $this->get_css(); ?>
+		</style><?php
+	}
 	
 
 	// -------------------------------------------------------
@@ -170,7 +172,6 @@ class Googlefont {
 		foreach ( array_keys($this->_selectors) as $mod_name )
 			if ($mod = get_theme_mod( $mod_name ))
 				$mods[] = $mod;
-	
 		$upar = $this->get_gfont_url_param( $mods );
 		if ( ! empty( $upar ) )
 			$google_font_url = '//fonts.googleapis.com/css?family='.$upar ;
