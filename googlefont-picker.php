@@ -9,11 +9,10 @@ Plugin Name: WP GoogleFont Picker
 Plugin URI: https://github.com/mcguffin/wp-googlefont-picker
 Description: Pick some GoogleFonts to pretty up your website. The Plugin hooks into WP Theme Customizer.
 Author: Joern Lund
-Version: 0.0.4
+Version: 0.0.5
 Author URI: https://github.com/mcguffin/
 
 Text Domain: googlefont
-Domain Path: /lang/
 */
 
 /*
@@ -27,63 +26,60 @@ ToDo:
 	- use WP caching system rather than 
 */
 
-if ( ! function_exists( 'googlefont_init' ) ) :
-function googlefont_init() {
+/**
+ * Autoload GFPicker Classes
+ *
+ * @param string $classname
+ */
+function googlefont_autoload( $classname ) {
+	$class_path = dirname(__FILE__). sprintf('/include/class-%s.php' , strtolower( $classname ) ) ; 
+	if ( file_exists($class_path) )
+		require_once $class_path;
 }
-add_action('init','googlefont_init');
-endif; // function_exists('googlefont_init')
+spl_autoload_register( 'googlefont_autoload' );
+
+
 
 
 if ( ! function_exists( 'googlefont_loaded' ) ) :
 function googlefont_loaded() {
-	load_plugin_textdomain( 'googlefont' , false , dirname(plugin_basename( __FILE__ )) . '/lang');
+	load_plugin_textdomain( 'googlefont' , false , dirname(plugin_basename( __FILE__ )) . '/languages');
 }
 add_action('plugins_loaded','googlefont_loaded');
 endif; // function_exists('googlefont_loaded')
 
 
 // setup
-if ( ! function_exists( 'googlefont_setup' ) ) :
-function googlefont_setup() {
-	include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont-filter.php';
-	include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont.php';
-	if ( ( isset( $_POST['customized'] ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) )
-		include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont-api.php';
+add_action( 'after_setup_theme' , array( Googlefont_Picker , 'instance' ) );
+add_action( 'customize_register' , array( Googlefont_Picker , 'instance' ) , 1 );
+
+// backend setup
+if ( is_admin() ) {
+	Googlefont_Admin::instance();
 }
-add_action( 'after_setup_theme', 'googlefont_setup' );
-endif; // function_exists('googlefont_setup')
 
-
-
-if ( ! function_exists( 'googlefont_customize_register' ) ) :
-function googlefont_customize_register() {
-	include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont-api.php';
-	include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont-filter.php';
-	include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont-picker.php';
-}
-add_action('customize_register','googlefont_customize_register' , 1 );
-endif; // function_exists('googlefont_customize_register')
 
 
 if ( ! function_exists( 'googlefont_ajax_init' ) ) :
 function googlefont_ajax_init(){
-	if ( is_admin() && defined('DOING_AJAX') && DOING_AJAX && isset( $_REQUEST['action']) && strpos( $_REQUEST['action'] , 'googlefont' ) !== false  )
-		googlefont_customize_register();
+// 	if ( is_admin() && defined('DOING_AJAX') && DOING_AJAX && isset( $_REQUEST['action']) && strpos( $_REQUEST['action'] , 'googlefont' ) !== false  )
+// 		googlefont_customize_register();
 }
 add_action('init','googlefont_ajax_init');
 endif; // function_exists('googlefont_ajax_init')
 
-if ( is_admin() ) {
-	include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont-api.php';
-	include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont-admin.php';
-}
+
+
+
+
+
+
 //
 //	Installation
 //
 
 if ( ! function_exists( 'googlefont_activate' )) :
 function googlefont_activate() {
-	include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont-admin.php';
 	Googlefont_Admin::instance()->add_options();
 }
 register_activation_hook( __FILE__ , 'googlefont_activate' );
@@ -91,7 +87,6 @@ endif; // function_exists('googlefont_activate')
 
 if ( ! function_exists( 'googlefont_uninstall' )) :
 function googlefont_uninstall() {
-	include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont-admin.php';
 	Googlefont_Admin::instance()->remove_options();
 }
 /*

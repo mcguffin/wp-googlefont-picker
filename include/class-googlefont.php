@@ -90,7 +90,6 @@ class Googlefont {
 	// get style names from URL parameters
 	// -------------------------------------------------------
 	public function get_gfont_styles_name( $url_param ) {
-		require_once 'class-googlefont-api.php';
 		$font_list = Googlefont_Api::instance( );
 		$fonts = explode('|',$url_param);
 		$ret = array();
@@ -105,8 +104,6 @@ class Googlefont {
 	// get URL parameters for google font load
 	// -------------------------------------------------------
 	public function get_gfont_url_param() {
-		require_once 'class-googlefont-api.php';
-		
 		$args = func_get_args();
 		if ( is_array($args[0]) )
 			$args = $args[0];
@@ -214,6 +211,6 @@ class Googlefont {
 		return (bool) preg_match( '/\/\/fonts\.googleapis\.com\/css\?family=(\w+)/' , $font_url );
 	}
 }
-Googlefont::instance();
+
 
 endif;

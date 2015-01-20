@@ -73,7 +73,6 @@ class Googlefont_Picker {
 	// -------------------------------------------
 	public function customize_register( $wp_customize ) {
 		$googlefont = Googlefont::instance();
-		include_once plugin_dir_path( __FILE__ ).'/class-customize_fontpicker_control.php';
 		$selectors = $googlefont->get_selectors();
 
 		if ( empty( $selectors ) ) 
@@ -100,4 +99,4 @@ class Googlefont_Picker {
 	}
 	
 }
-Googlefont_Picker::instance();
+

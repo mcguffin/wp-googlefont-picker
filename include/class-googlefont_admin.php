@@ -487,7 +487,7 @@ class Googlefont_Admin {
 	}
 	
 }
-Googlefont_Admin::instance();
+
 
 endif;
 
