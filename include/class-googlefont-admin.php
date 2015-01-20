@@ -13,7 +13,7 @@ class Googlefont_Admin {
 	/**
 	 *	Holding the singleton instance
 	 */
-	private $_instance = null;
+	private static $_instance = null;
 
 	/**
 	 *	@return WP_reCaptcha_Options The options manager instance
