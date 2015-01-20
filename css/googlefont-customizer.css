@@ -103,6 +103,6 @@
 input.googlefont-pick-family {
 	display:none;
 }
-.googlefont-filter {
+.customize-control input[type="search"].googlefont-filter {
 	width:59%;
 }

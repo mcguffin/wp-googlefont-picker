@@ -4,11 +4,34 @@
  * This class does the frontend job. Enqueing Googlefont-css and printing custom styles.
  */
 
+if ( ! class_exists( 'Googlefont' ) ) :
 class Googlefont {
 
 	private $_selectors = array();
 	
-	public function __construct( ) {
+	/**
+	 *	Holding the singleton instance
+	 */
+	private static $_instance = null;
+
+	/**
+	 *	@return WP_reCaptcha_Options The options manager instance
+	 */
+	public static function instance(){
+		if ( is_null( self::$_instance ) )
+			self::$_instance = new self();
+		return self::$_instance;
+	}
+
+	/**
+	 *	Prevent from creating more than one instance
+	 */
+	private function __clone() {
+	}
+	/**
+	 *	Prevent from creating more than one instance
+	 */
+	private function __construct() {
 		if ( $selectors = get_option( 'googlefont_selectors' ) )
 			foreach ( $selectors as $selector_args )
 				Googlefont::register_font_selector( $selector_args );
@@ -68,7 +91,7 @@ class Googlefont {
 	// -------------------------------------------------------
 	public function get_gfont_styles_name( $url_param ) {
 		require_once 'class-googlefont-api.php';
-		$font_list = Googlefont_Api::get_instance( );
+		$font_list = Googlefont_Api::instance( );
 		$fonts = explode('|',$url_param);
 		$ret = array();
 		foreach ( $fonts as $font ) {
@@ -95,7 +118,7 @@ class Googlefont {
 			if (!$fam)
 				continue;
 			if ( $family && ! isset( $ret[ $fam ] ) ) {
-				$font_obj = Googlefont_Api::get_instance( )->get_font($family);
+				$font_obj = Googlefont_Api::instance( )->get_font($family);
 				if ( $font_obj )
 					$ret[$fam] = $font_obj->variants; // sometimes fonts are only available in italic. We need to explicitly add a stylename here.
 				else
@@ -191,6 +214,6 @@ class Googlefont {
 		return (bool) preg_match( '/\/\/fonts\.googleapis\.com\/css\?family=(\w+)/' , $font_url );
 	}
 }
-global $googlefont;
-$googlefont = new Googlefont();
+Googlefont::instance();
 
+endif;

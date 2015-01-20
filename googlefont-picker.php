@@ -84,7 +84,7 @@ if ( is_admin() ) {
 if ( ! function_exists( 'googlefont_activate' )) :
 function googlefont_activate() {
 	include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont-admin.php';
-	Googlefont_Admin::add_options();
+	Googlefont_Admin::instance()->add_options();
 }
 register_activation_hook( __FILE__ , 'googlefont_activate' );
 endif; // function_exists('googlefont_activate')
@@ -92,7 +92,7 @@ endif; // function_exists('googlefont_activate')
 if ( ! function_exists( 'googlefont_uninstall' )) :
 function googlefont_uninstall() {
 	include_once plugin_dir_path( __FILE__ ).'/include/class-googlefont-admin.php';
-	Googlefont_Admin::remove_options();
+	Googlefont_Admin::instance()->remove_options();
 }
 /*
 register_deactivation_hook( __FILE__ , 'googlefont_uninstall' );

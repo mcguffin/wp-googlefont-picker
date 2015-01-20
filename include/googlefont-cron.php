@@ -30,7 +30,7 @@ function googlefont_cron_periods( $schedules ) {
 add_filter( 'cron_schedules', 'googlefont_cron_periods' );
 
 function googlefont_cron_refresh( ) {
-	Googlefont_Api::get_instance()->refresh();
+	Googlefont_Api::instance()->refresh();
 }
 
 add_action( 'googlefont_cron_refresh' , 'googlefont_cron_refresh' );

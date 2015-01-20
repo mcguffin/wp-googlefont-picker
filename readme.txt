@@ -3,7 +3,11 @@ Contributors: podpirate
 //Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CXETZUWYAAVC8
 Tags: fonts,theme,googlefont,webfont,design,typography
 Requires at least: 3.6
+<<<<<<< HEAD
 Tested up to: 3.9
+=======
+Tested up to: 4.1
+>>>>>>> FETCH_HEAD
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html

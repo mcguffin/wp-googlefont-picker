@@ -15,7 +15,7 @@ class Googlefont_Api {
 	private $_subsets	= array();
 	
 	
-	public static function &get_instance( $filter = false ) {
+	public static function &instance( $filter = false ) {
 		if ( ! isset( self::$_instance ) )
 			self::$_instance = new Googlefont_Api();
 		
@@ -23,7 +23,15 @@ class Googlefont_Api {
 
 	}
 
-	private function __construct( ) {
+	/**
+	 *	Prevent from creating more than one instance
+	 */
+	private function __clone() {
+	}
+	/**
+	 *	Prevent from creating more than one instance
+	 */
+	private function __construct() {
 		$this->init();
 	}
 	private function init( $json_data = null ) {
