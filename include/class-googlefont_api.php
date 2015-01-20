@@ -4,8 +4,8 @@
 
 
 class Googlefont_Api {
-	const METADATA_URL = 'http://googlefontdirectory.googlecode.com/hg/{$license}/{$font}/METADATA.json';
-	const WEBFONTS_LIST_URL = 'https://www.googleapis.com/webfonts/v1/webfonts?key={$google_api_key}';
+// 	const METADATA_URL = 'http://googlefontdirectory.googlecode.com/hg/%s/%s/METADATA.json';
+	const WEBFONTS_LIST_URL = 'https://www.googleapis.com/webfonts/v1/webfonts?key=%s';
 
 	private static $_instance;
 	
@@ -39,7 +39,6 @@ class Googlefont_Api {
 			$json_data = get_option( '_googlefont_fontlist' );
 		
 		$this->_data = json_decode( $json_data );
-		
 		$variants = array();
 		$subsets  = array();
 		
@@ -57,7 +56,7 @@ class Googlefont_Api {
 	}
 	public function refresh( $google_api_key = null ) {
 		if ( ! is_null( $google_api_key ) || ($google_api_key = get_option( 'googlefont_api_key' )) ) {
-			$url = eval( 'return "'.self::WEBFONTS_LIST_URL.'";' );
+			$url = sprintf( self::WEBFONTS_LIST_URL , $google_api_key );
 			$response = wp_remote_get( $url );
 			
 			if ( is_wp_error( $response ) || $response['response']['code'] !== 200 )

@@ -68,7 +68,7 @@ class Googlefont {
 		));
 		$this->_selectors[$selector->name] = $selector;
 		
-		add_filter( "googlefont_list" , array( 'Googlefont_Filter' , 'by_subset') );
+		// filter googlefont list according to plugin options
 		if ( isset($selector->filter) &&  $selector->filter && is_callable($selector->filter->callback) ) 
 			add_filter( "googlefont_{$selector->name}_list" , $selector->filter->callback );
 	}

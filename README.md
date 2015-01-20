@@ -60,5 +60,3 @@ The plugin offers some filters to allow themes and other plugins to hook in.
 ToDo:
 -----
 - Rename Plugin textdomain, lang directory
-- Autoload classes
-- Singletons
