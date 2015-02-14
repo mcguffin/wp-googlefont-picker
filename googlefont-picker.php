@@ -50,9 +50,9 @@ endif; // function_exists('googlefont_loaded')
 
 
 // setup
-add_action( 'after_setup_theme' , array( Googlefont , 'instance' ) );
-add_action( 'after_setup_theme' , array( Googlefont_Picker , 'instance' ) );
-add_action( 'customize_register' , array( Googlefont_Picker , 'instance' ) , 1 );
+add_action( 'after_setup_theme' , array( 'Googlefont' , 'instance' ) );
+add_action( 'after_setup_theme' , array( 'Googlefont_Picker' , 'instance' ) );
+add_action( 'customize_register' , array( 'Googlefont_Picker' , 'instance' ) , 1 );
 
 // backend setup
 if ( is_admin() ) {

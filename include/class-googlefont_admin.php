@@ -18,7 +18,7 @@ class Googlefont_Admin {
 	/**
 	 *	@return WP_reCaptcha_Options The options manager instance
 	 */
-	public function instance() {
+	public static function instance() {
 		if ( is_null( self::$_instance ) )
 			self::$_instance = new self();
 		return self::$_instance;
