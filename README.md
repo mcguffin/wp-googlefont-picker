@@ -11,13 +11,13 @@ Description
 Frequently asked questions
 --------------------------
 
-### Do I need this infamous Google-API-Key badly? ###
+### Do I need this infamous Google-API-Key badly?
 
 Nope, the API-Key is optional. However it is is needed to fetch the most recent list of available fonts. 
 There is also a font-list included in the plugin, so it should work out of the box as well. 
 I will update this list as well, when I publish a new version.
 
-### Is it compatibe with my theme? ###
+### Is it compatibe with my theme?
 
 It depends on your Theme. By now it has been tested with twentythirteen and travelify. 
 
@@ -37,7 +37,7 @@ in the Settings section. A themes might put the font information into annoying s
 Use a DOM inspecting tool like Webkit, or Firebug to detect from what seletor an element 
 recieves its font-family property.
 
-### Why can't I filter fonts by style like serif/sans/headline? ###
+### Why can't I filter fonts by style like serif/sans/headline?
 
 Short answer: Because it would be too much traffic.
 Long answer: The Google-API offers two methods. The first one returns the fonts list. The second one returns 
@@ -48,15 +48,43 @@ obaining all meta information would take 5 minutes, and cause a php timeout.
 The result: Support requests, lots of one-star-ratings, sadness and despair plus global warming due to 
 increased computing activity. Save the World. Don't make me implement style filtering.
 
-Plugin API
-----------
 
-The plugin offers some filters to allow themes and other plugins to hook in.
+Theme support:
+--------------
 
-### Action googlefont_init ###
+```
+html,
+body,
+button,
+input,
+select,
+textarea,
+blockquote cite,
+blockquote small,
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"],
+.post-password-form label,
+.main-navigation .menu-item-description,
+.post-navigation .meta-nav,
+.post-navigation .post-title,
+.pagination,
+.image-navigation,
+.comment-navigation,
+.widget_rss .rss-date,
+.widget_rss cite,
+.page-links,
+.entry-caption,
+.entry-footer,
+.comment-list .reply a,
+.comment-form label,
+.comment-notes,
+.comment-awaiting-moderation,
+.logged-in-as,
+.form-allowed-tags,
+.no-comments,
+.wp-caption-text
+```
+.gallery-caption
 
-
-
-ToDo:
------
-- Rename Plugin textdomain, lang directory
