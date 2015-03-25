@@ -88,3 +88,13 @@ input[type="submit"],
 ```
 .gallery-caption
 
+=======
+### Action googlefont_init ###
+
+
+
+ToDo:
+-----
+- Rename Plugin textdomain, lang directory
+- Autoload classes
+√ Singletons
